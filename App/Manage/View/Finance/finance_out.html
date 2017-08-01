@@ -1,0 +1,287 @@
+<extend name="Public/base"/>
+
+<block name="body">
+    <div class="pd-20">
+        <table>
+        <tr>
+            <td style="width: 10%;height: 30px"><span style="float: right;margin-right: 10px" id="time_top">日期范围：</span></td>
+            <td style="width: 12%;height: 30px">
+                <div class="formControls col-1" style="width: 160px;">
+                    <span class="select-box" id="border_none">
+                        <select class="select search" size='1' name="time_type" id="times">
+                            <option value="2" <eq name="time_type" value="2">selected</eq>>七天</option>
+                            <option value="1" <eq name="time_type" value="1">selected</eq>>今天</option>
+                            <option value="3" <eq name="time_type" value="3">selected</eq>>一个月</option>
+                            <option value="4" <eq name="time_type" value="4">selected</eq>>三个月</option>
+                            <option value="-1" <eq name="time_type" value="-1">selected</eq>>自定义时间</option>
+                        </select>
+                    </span>
+                </div>
+            </td>
+            <td style="width: 28%;height: 30px;">
+                <div style="width: 100%;height: 100%;display: none" id="time_is">
+                    <span>自定义时间：</span>
+                    <input type="text" onfocus="selecttime(1)"  id="start_time" name='start_time' value="{$list.get.start_time}" class="input-text Wdate search" style="width:120px;">
+                    -
+                    <input type="text" onfocus="selecttime(2)" id="end_time" name ='end_time' value="{$list.get.end_time}" class="input-text Wdate search" style="width:120px;">
+                </div>
+            </td>
+            <td style="width: 12%;height: 30px"><span style="float: right;margin-right: 20px">提现状态：</span></td>
+            <td style="width: 5%;height: 30px">
+                <div class="formControls col-1" style="width: 160px;">
+                   <span class="select-box">
+                        <select class="select search" size='1' name="is_withdraw">
+                            <option value="" selected>&#45;&#45;请选择&#45;&#45;</option>
+                            <option value="-1" <eq name="list.get.is_withdraw" value="-1">selected</eq>>提现失败</option>
+                            <option value="0" <eq name="list.get.is_withdraw" value="0">selected</eq>>提交申请</option>
+                            <option value="1" <eq name="list.get.is_withdraw" value="1">selected</eq>>向银行发起转账</option>
+                            <option value="2" <eq name="list.get.is_withdraw" value="2">selected</eq>>提现成功</option>
+                        </select>
+                    </span>
+                </div>
+            <td style="width: 12%;height: 30px"><span style="float: right;margin-right: 20px">导游类型：</span></td>
+            <td style="width: 5%;height: 30px">
+                <div class="formControls col-1" style="width: 160px;">
+                    <span class="select-box">
+                        <select class="select search" size='1' name="guide_type">
+                            <option value="" selected>&#45;&#45;请选择&#45;&#45;</option>
+                            <option value="1" <eq name="list.get.guide_type" value="1">selected</eq>>讲解员</option>
+                            <option value="2" <eq name="list.get.guide_type" value="2">selected</eq>>领路人</option>
+                        </select>
+                    </span>
+                </div>
+            </td>
+            <td style="width: 12%;height: 30px">
+                <input type="text" name="key"  id="key" value="{$list.get.key}" placeholder="用户账号/订单号" style="width:200px;" class="input-text search">
+            </td>
+            <td style="width: 7%;height: 30px">
+                <button name="search" class="btn btn-success" url="{:U('')}" type="button"><i class="Hui-iconfont">&#xe665;</i> 搜索</button>
+                <input type="hidden" id="times_type"  value="{$time_type}">
+            </td>
+        </tr>
+     </table>
+        <div class="cl pd-5 bg-1 bk-gray mt-20">
+            <span class="l">
+                <!--<a href="javascript:;" onclick="del('{:U(\'del_coupon\')}')" class="btn btn-danger radius"><i class="Hui-iconfont">&#xe6e2;</i> 批量删除</a>-->
+                <button name="export" style="float: right;width: 120px;color: #000000" url="{:U('export')}" class="btn btn-link">下载Excel文件</button>
+            </span>
+            <span class="r">共有数据：<strong>{:count($list['list'])}</strong> 条</span>
+        </div>
+        <div class="mt-20">
+            <table class="table table-border table-bordered table-hover table-bg table-striped">
+                <thead>
+                <tr class="text-c">
+                  <!--  <th width="15"><input type="checkbox" name="" value=""></th>-->
+                    <th width="50">第三方转账交易号</th>
+                    <th width="40">银行联行号</th>
+               <!--     <th width="50">手机号</th>-->
+                    <th width="50">用户账号</th>
+                    <th width="50">持卡人姓名</th>
+                    <th width="40">提现成功时间</th>
+                    <th width="40">提现金额</th>
+                    <th width="40">提现方式(银行)</th>
+                    <th width="50">提现银行卡号</th>
+                 <!--   <th width="30">服务类型</th>-->
+                    <!--<th width="30">优惠卷</th>-->
+                    <th width="30">用户余额</th>
+                <!--    <th width="40">支付账号</th>-->
+                    <th width="20">提现状态</th>
+                  <!--  <th width="20">操作</th>-->
+                </tr>
+                </thead>
+                <tbody>
+                <volist name="list.list" id="vo">
+                    <tr class="text-c">
+                     <!--   <td><input type="checkbox" value="{$vo.uid}" name="checked"></td>-->
+                        <td>{$vo.order_number}</td>
+                        <td>{$vo.bank_number} </td>
+                       <!-- <td>{$vo.nickname}</td>-->
+                        <td>{$vo.phone}</td>
+                        <td>{$vo.bankcard_username}</td>
+                        <td>{$vo.request_time}</td>
+                        <td>{$vo.withdraw_amount}</td>
+                        <td>{$vo.bank_name}</td>
+                        <td>{$vo.bankcard_number}</td>
+                      <!--  <td>
+                            <if condition="$vo.guide_type eq '1'">讲解员
+                                <elseif condition="$vo.guide_type eq '2'"/>领路人
+                                <else />导游
+                            </if>
+                        </td>-->
+                        <td>{$vo.now_total_amount}</td>
+                        <td><span style="color: red">
+                            <if condition="$vo.is_withdraw eq '-1'">失败
+                                <elseif condition="$vo.is_withdraw eq '0'"/>提交申请
+                                <elseif condition="$vo.is_withdraw eq '1'"/>发起银行转账
+                                <elseif condition="$vo.is_withdraw eq '2'"/>成功
+                                <else />-
+                            </if>
+                        </span></td>
+
+                        <!--<td>{$vo.pay_time}</td>
+                        <td>{$vo.is_withdraw}</td>-->
+
+                       <!-- <td>
+                            <a title="用户信息预览" href="javascript:;" onclick="user_edit('用户信息', '{:U('out_details',array('order_number'=>$vo['order_number']))}')" class="ml-5" style="text-decoration:none">查看详情</a>
+                        </td>-->
+                    </tr>
+                </volist>
+                </tbody>
+            </table>
+        </div>
+        <input type="hidden" id="pages" value="{$list.pages}">
+        <elt name="list.pages" value="1"><div id="page" style="margin-top:5px; text-align:center;display: none;"></div><else/><div id="page" style="margin-top:5px; text-align:center;"></div></elt>
+        <input type="hidden" id="differences" value="{$time_differences}">
+    </div>
+
+    <block name="script">
+        <script type="text/javascript" src="__OTHER__/lib/laypage/1.2/laypage.js"></script>
+        <script type="text/javascript" src="__OTHER__/lib/My97DatePicker/WdatePicker.js"></script>
+        <script type="text/javascript">
+            /*管理员-增加*/
+            function add(title, url, w, h) {
+                layer_show(title, url, w, h);
+            }
+            $(document).ready(function(){
+                var times_type = $('#times_type').val();
+                if(times_type == -1){
+                    /*$('#times').css('display','none');
+                     $('#border_none').css('display','none');
+                     $('#time_top').css('display','none');*/
+                    $('#time_is').css('display','block');
+                }
+            });
+            $('#times').change(function () {
+                if($(this).val() == -1){
+                    $('#start_time').val('');
+                    $('#end_time').val('');
+                    /*$(this).css('display','none');*/
+                    /*$('#border_none').css('display','none');
+                     $('#time_top').css('display','none');*/
+                    $('#time_is').css('display','block');
+                }else{
+                    $(this).css('display','block');
+                    $('#border_none').css('display','block');
+                    $('#time_top').css('display','block');
+                    $('#time_is').css('display','none');
+                }
+            });
+
+            // 分页
+            laypage({
+                cont: $('#page'), //容器。值支持id名、原生dom对象，jquery对象,
+                pages: $('#pages').val(), //总页数
+                skip: true, //是否开启跳页
+                groups: 3, //连续显示分页数
+                curr: function(){ //通过url获取当前页，也可以同上（pages）方式获取
+                    var page = location.search.match(/page=(\d+)/);
+                    return page ? page[1] : 1;
+                }(),
+                jump: function(e, first){ //触发分页后的回调
+                    if(!first){ //一定要加此判断，否则初始时会无限刷新
+                        var url = window.location.href;
+                        var query = 'page='+e.curr;
+                        if(url.indexOf('?')>0 ){
+                            if(window.location.search.match(/page=(\d+)/)){
+                                url = url.replace(/page=(\d+)/,query);
+                            }else{
+                                url += '&' + query;
+                            }
+                        }else{
+                            url += '?' + query;
+                        }
+                        window.location.href = url;
+                    }
+                }
+            });
+            function user_edit(title, url, id, w, h){
+                layer_show(title, url, w, h);
+            }
+            $("button[name='export']").click(function(){
+                var url = $(this).attr('url');
+                var query  = $('body').find('.search').serialize();
+                query = query.replace(/(&|^)(\w*?\d*?\-*?_*?)*?=?((?=&)|(?=$))/g,'');
+                query = query.replace(/^&/g,'');
+                if( url.indexOf('?')>0 ) url += '&' + query;
+                else url += '?' + query;
+                window.location.href = url;
+            });
+            //搜索功能
+            $("button[name='search']").click(function(){
+                var url = $(this).attr('url');
+                var query  = $('body').find('.search').serialize();
+                query = query.replace(/(&|^)(\w*?\d*?\-*?_*?)*?=?((?=&)|(?=$))/g,'');
+                query = query.replace(/^&/g,'');
+                if( url.indexOf('?')>0 ) url += '&' + query;
+                else url += '?' + query;
+                window.location.href = url;
+            });
+
+            //回车搜索
+            $("#search").keyup(function(e){
+                if(e.keyCode === 13){
+                    $("button[name='search']").click();
+                    return false;
+                }
+            });
+
+            //时间选择
+            function selecttime(flag) {
+                switch (flag) {
+                    case 1:
+                        var end_date = $("#end_time").val();
+                        if (end_date != "") {
+                            var now_date = new Date();
+                            var y = now_date.getFullYear();
+                            var m = now_date.getMonth() + 2;
+                            var d = now_date.getDate();
+                            var now_time = new Date(y + '/' + m + '/' + d);
+                            if (new Date(end_date.replace("-", "/").replace("-", "/")) <= now_time) {
+                                WdatePicker({dateFmt: 'yyyy-MM-dd', minDate: '', maxDate: end_date});
+                            } else {
+                                WdatePicker({dateFmt: 'yyyy-MM-dd', minDate: '', maxDate: '%y-%M-%d'});
+                            }
+                        } else {
+                            WdatePicker({dateFmt: 'yyyy-MM-dd', minDate: '', maxDate: '%y-%M-%d'});
+                        }
+                        break;
+                    case 2:
+                        var startTime = $("#start_time").val();
+                        if (startTime != "") {
+                            WdatePicker({dateFmt: 'yyyy-MM-dd', minDate: startTime, maxDate: '%y-{%M}-%d'});
+                        } else {
+                            WdatePicker({dateFmt: 'yyyy-MM-dd', minDate: '', maxDate: '%y-%M-%d'});
+                        }
+                        break;
+                }
+            }
+            function del(url) {
+                var tmp = new Array();
+                $("input[name='checked']").each(function () {
+                    if ($(this).is(':checked'))
+                        tmp.push($(this).val());
+                })
+                if (tmp.length <= 0) {
+                    alert('你还没有选择任何内容！');
+                    return false;
+                }
+                layer.confirm('确认要删除吗？', function (index) {
+                    //此处请求后台程序，下方是成功后的前台处理……
+                    //ajaxPost提交
+                    $.post(url, {'id': tmp}, function (data) {
+                        parent.layer.alert(data.info, {
+                            time: 3000, //不自动关闭
+                            icon: data.status == '1' ? 1 : 0,
+                            btn: ['确定', ],
+                            end: function () {
+                                window.location.reload();//刷新父窗体
+                            },
+                        });
+                    });
+                    $(obj).parents("tr").remove();
+                    layer.msg('已删除!', {icon: 1, time: 1000});
+                });
+            }
+        </script>
+    </block>
+</block>

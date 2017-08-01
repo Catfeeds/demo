@@ -1,0 +1,190 @@
+<extend name='Public/base'/>
+<block name='body'>
+    <div class="pd-20">
+        <form action="" method="post" class="form form-horizontal" id="form-admin-add">
+            <div class="row cl">
+                <label class="form-label col-3"><span class="c-red">*</span>优惠券有效期：</label>
+                <div class="formControls col-5">
+                    <!--                    <input type="text" onfocus="WdatePicker({maxDate: '#F{$dp.$D(\'logmax\')\'%y-%M-%d\'}'})" id="logmin" class="input-text Wdate" style="width:120px;">-->
+                    <input type="text" onfocus="selecttime(1)" id="start_time" name='exp_start' class="input-text Wdate" style="width:120px;" data_type='*' nullmsg='优惠券有效期-开始时间不能为空！'>
+                    -
+                    <input type="text" onfocus="selecttime(2)" id="end_time" name ='exp_end' class="input-text Wdate" style="width:120px;" data_type='*' nullmsg='优惠券有效期-结束时间不能为空！'>
+                </div>
+                <div class="col-4"> </div>
+            </div>
+            <div class="row cl">
+                <label class="form-label col-3"><span class="c-red">*</span>优惠券类型：</label>
+                <div class="formControls col-5">
+                    <span class="select-box">
+                        <select class="select" size='1' name="coupon_type" datatype="*" nullmsg="请选择优惠券类型！">
+                            <option value="" selected>--请选择--</option>
+                            <option value="1">减免券</option>
+                            <option value="2">折扣券</option>
+                        </select>
+                    </span>
+                </div>
+                <div class="col-4"> </div>
+            </div>
+            <div class="row cl">
+                <label class="form-label col-3"><span class="c-red">*</span>优惠券使用限制①：</label>
+                <div class="formControls col-5">
+                    <span class="select-box">
+                        <select class="select" size='1' name="guide_type" datatype="*" nullmsg="请选择导游类型！">
+                            <option value="" selected>--请选择导游类型--</option>
+                            <option value="1">导游</option>
+                            <!--                            <option value="2">随游</option>-->
+                            <option value="3">向导</option>
+                        </select>
+                    </span>
+                </div>
+                <div class="col-4"> </div>
+            </div>
+            <div class="row cl">
+                <label class="form-label col-3"><span class="c-red">*</span>优惠券使用限制②：</label>
+                <div class="formControls col-5">
+                    <span class="select-box">
+                        <select class="select" size='1' name="server_type" datatype="*" nullmsg="请选择服务类型！">
+                            <option value="" selected>--请选择服务类型--</option>
+                            <option value="1">即时服务</option>
+                            <option value="2">预约服务</option>
+                        </select>
+                    </span>
+                </div>
+                <div class="col-4"> </div>
+            </div>
+            <div class="row cl">
+                <label class="form-label col-3"><span class="c-red">*</span>最大抵消金额：</label>
+                <div class="formControls col-5">
+                    <input type="text" class="input-text" placeholder="可空，空不限制金额；如：10；" name="max_coupon_money" id="max_coupon_money">
+                </div>
+                <div class="col-4"> </div>
+            </div>
+            <div class="row cl">
+                <div class="col-9 col-offset-3">
+                    <input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+                </div>
+            </div>
+        </form>
+    </div>
+    <block name='script'>
+        <script type="text/javascript" src="__OTHER__/lib/My97DatePicker/WdatePicker.js"></script>
+        <script type="text/javascript">
+            $(function () {
+                $("#form-admin-add").Validform({
+                    tiptype: 2,
+                    ajaxPost: true, //ajax提交
+                    postonce: true, //提交一次
+                    beforeCheck: function (curform) {
+                        //在表单提交执行验证之前执行的函数，curform参数是当前表单对象。
+                        //这里明确return false的话将不会继续执行验证操作;
+                        var start_time = $("#start_time").val();
+                        var end_time = $("#end_time").val();
+                        if (start_time.length <= 0) {
+                            alert('优惠券开始时间不能为空！');
+                            return false;
+                        } else if (end_time.length <= 0) {
+                            alert('优惠券结束时间不能为空！');
+                            return false;
+                        } else if (end_time < start_time) {
+                            alert('开始时间不能大于结束时间！');
+                            return false;
+                        }
+                    },
+                    beforeSubmit: function (curform) {
+                        //表单提交之前执行
+                        var coupon_type = $('select[name="coupon_type"]').val();
+                        var coupon_rule = $('input[name="coupon_rule"]').val();
+                        switch (coupon_type) {
+                            case '1':
+                                if (coupon_rule <= 0) {
+                                    alert('优惠券减免金额必须大于0');
+                                    return false;
+                                }
+                                break;
+                            case '2':
+                                if (coupon_rule <= 0 || coupon_rule >= 10) {
+                                    alert('优惠券折扣率必须大于0小于10');
+                                    return false;
+                                }
+                                break;
+                            default:
+                                return false;
+                                break;
+                        }
+                    },
+                    callback: function (data) {
+                        if (data.status == 1) {
+                            parent.layer.alert(data.info, {
+                                time: 0, //不自动关闭
+                                icon: 1,
+                                btn: ['确定', '继续添加'],
+                                yes: function (index) {
+                                    parent.layer.close(index);
+                                    window.parent.location.reload();//刷新父窗体
+                                    parent.layer.close(parent.layer.getFrameIndex(window.name));//关闭当前窗体
+                                },
+                                cancel: function (index) {
+                                    parent.layer.close(index);
+                                    window.location.reload();
+                                },
+                            });
+                        }
+                    }
+                });
+                $('select[name="coupon_type"]').change(function () {
+                    var html = '<div class="row cl">';
+                    switch ($(this).val()) {
+                        case '1':
+                            html += '<label class="form-label col-3"><span class="c-red">*</span>请输入减免金额：</label>';
+                            html += '<div class="formControls col-5">';
+                            html += '<input type="text" class="input-text" placeholder="请输入减免金额" name="coupon_rule" id="coupon_rule" datatype="n" nullmsg="请输入正确的金额格式！">';
+                            html += '</div><div class="col-4"> </div>';
+                            break;
+                        case '2':
+                            html += '<label class="form-label col-3"><span class="c-red">*</span>请输入优惠券折扣：</label>';
+                            html += '<div class="formControls col-5">';
+                            html += '<input type="text" class="input-text" placeholder="如：“9”;即代表优惠券打9折；" name="coupon_rule" id="coupon_rule" datatype="n" nullmsg="请输入正确的金额格式！">';
+                            html += '</div><div class="col-4"> </div>';
+                            break;
+                        default:
+                            $('input[name="coupon_rule"]').parents('.row').remove();
+                            return;
+                    }
+                    html += '</div>';
+                    $('input[name="coupon_rule"]').parents('.row').remove();
+                    $('select[name="coupon_type"]').parents('.row').after(html);
+                })
+            });
+            //时间选择
+            function selecttime(flag) {
+                switch (flag) {
+                    case 1:
+                        var end_date = $("#end_time").val();
+                        if (end_date != "") {
+                            var now_date = new Date();
+                            var y = now_date.getFullYear();
+                            var m = now_date.getMonth() + 2;
+                            var d = now_date.getDate();
+                            var now_time = new Date(y + '/' + m + '/' + d);
+                            if (new Date(end_date.replace("-", "/").replace("-", "/")) <= now_time) {
+                                WdatePicker({dateFmt: 'yyyy-MM-dd', minDate: '%y-%M-%d', maxDate: end_date});
+                            } else {
+                                WdatePicker({dateFmt: 'yyyy-MM-dd', minDate: '%y-%M-%d', maxDate: '%y-{%M+1}-%d'});
+                            }
+                        } else {
+                            WdatePicker({dateFmt: 'yyyy-MM-dd', minDate: '%y-%M-%d', maxDate: '%y-{%M+1}-%d'});
+                        }
+                        break;
+                    case 2:
+                        var startTime = $("#start_time").val();
+                        if (startTime != "") {
+                            WdatePicker({dateFmt: 'yyyy-MM-dd', minDate: startTime, maxDate: '%y-{%M+3}-%d'});
+                        } else {
+                            WdatePicker({dateFmt: 'yyyy-MM-dd', minDate: '%y-%M-%d', maxDate: '%y-{%M+3}-%d'});
+                        }
+                        break;
+                }
+            }
+        </script>
+    </block>
+</block>

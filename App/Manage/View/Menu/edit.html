@@ -1,0 +1,132 @@
+<extend name='Public/base'/>
+<block name='body'>
+    <div class="pd-20">
+        <form action="" method="post" class="form form-horizontal" id="form-add">
+            <div class="row cl">
+                <label class="form-label col-3"><span class="c-red">*</span>标题：</label>
+                <div class="formControls col-5">
+                    <input type="text" class="input-text" placeholder="用于后台显示的配置标题" name="title" id="title" value="{$info.title|default=''}"  datatype="*" nullmsg="菜单标题不能为空">
+                </div>
+                <div class="col-4"> </div>
+            </div>
+            <div class="row cl">
+                <label class="form-label col-3"><span class="c-red">*</span>排序：</label>
+                <div class="formControls col-5">
+                    <input type="text" class="input-text" placeholder="用于分组显示的顺序" name="sort" id="sort" value="{$info.sort|default=0}" datatype="n" nullmsg="分组排序的不能为空">
+                </div>
+                <div class="col-4"> </div>
+            </div>
+            <div class="row cl">
+                <label class="form-label col-3"><span class="c-red">*</span>链接：</label>
+                <div class="formControls col-5">
+                    <input type="text" class="input-text" placeholder="U函数解析的URL或者外链" name="url" id="url" value="{$info.url|default=''}"  datatype="*" nullmsg="U函数解析的URL或者外链不能为空！">
+                </div>
+                <div class="col-4"> </div>
+            </div>
+            <div class="row cl">
+                <label class="form-label col-3"><span class="c-red">*</span>上级菜单：</label>
+                <div class="formControls col-5">
+                    <span class="select-box">
+                        <select class="select" size='1' name="pid" datatype="*" nullmsg="所属的上级菜单不能为空！">
+                            <volist name="Menus" id="menu">
+                                    <option value="{$menu.id}" <eq name="menu.id" value="$info.pid">selected</eq>>{$menu.title_show}</option>
+                            </volist>
+                        </select>
+                    </span>
+                </div>
+                <div class="col-4"> </div>
+            </div>
+            <!--<div class="row cl">
+                <label class="form-label col-3"><span class="c-red">*</span>分组：</label>
+                <div class="formControls col-5">
+                    <input type="text" class="input-text" placeholder="（用于左侧分组二级菜单）" name="group" id="group" value="{$info.group|default=''}">
+                </div>
+                <div class="col-4"> </div>
+            </div>-->
+            <div class="row cl">
+                <label class="form-label col-3"><span class="c-red">*</span>是否隐藏：</label>
+                <div class="formControls col-5">
+                    <div class="skin-minimal">
+                        <div class="radio-box">
+                            <input type="radio" id="radio-1" name="hide" value="1">
+                            <label for="radio-1">是</label>
+                        </div>
+                        <div class="radio-box">
+                            <input type="radio" id="radio-0" name="hide" value="0" checked>
+                            <label for="radio-0">否</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4"> </div>
+            </div>
+            <div class="row cl">
+                <label class="form-label col-3"><span class="c-red">*</span>仅开发者模式可见：</label>
+                <div class="formControls col-5">
+                    <div class="skin-minimal">
+                        <div class="radio-box">
+                            <input type="radio" id="radio-2" name="is_dev" value="1">
+                            <label for="radio-2">是</label>
+                        </div>
+                        <div class="radio-box">
+                            <input type="radio" id="radio-3" name="is_dev" value="0" checked>
+                            <label for="radio-3">否</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4"> </div>
+            </div>
+            <div class="row cl">
+                <label class="form-label col-3"><span class="c-red">*</span>说明：</label>
+                <div class="formControls col-5">
+                    <input type="text" class="input-text" placeholder="（菜单详细说明）" name="tip" id="tip" value="{$info.tip|default=''}">
+                </div>
+                <div class="col-4"> </div>
+            </div>
+            <div class="row cl">
+                <div class="col-9 col-offset-3">
+                    <input type="hidden" name="id" value="{$info.id|default=''}">
+                    <input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+                </div>
+            </div>
+        </form>
+    </div>
+    <block name='script'>
+        <script type="text/javascript">
+            $(function () {
+                $("#form-add").Validform({
+                    tiptype: 2,
+                    ajaxPost: true, //ajax提交
+                    postonce: true, //提交一次
+                    callback: function (data) {
+                        if (data.status == 1) {
+                            console.log(data.info);
+                            parent.layer.alert(data.info, {
+                                time: 0, //不自动关闭
+                                icon: 1,
+                                btn: ['确定'],
+                                yes: function (index) {
+                                    parent.layer.close(index);
+                                    window.parent.location.reload();//刷新父窗体
+                                    parent.layer.close(parent.layer.getFrameIndex(window.name));//关闭当前窗体
+                                },
+                                /*cancel: function (index) {
+                                    parent.layer.close(index);
+                                    window.location.reload();
+                                },*/
+                            });
+                        }else if(data.status == 0){
+                            parent.layer.alert(data.info, {
+                                time: 0, //不自动关闭
+                                icon: 2,
+                                btn: ['确定'],
+                                yes: function (index) {
+                                    parent.layer.close(index);
+                                },
+                            });
+                        }
+                    }
+                });
+            });
+        </script>
+    </block>
+</block>

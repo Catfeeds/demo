@@ -1,0 +1,33 @@
+<aside class="Hui-aside">
+    <input runat="server" id="divScrollValue" type="hidden" value="" />
+    <div class="menu_dropdown bk_2">
+        <!--<volist name="group_title" id="vo">
+            <dl id="menu-{$key}">
+                <dt><i class="Hui-iconfont">&#xe616;</i>{$vo.group_title}<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
+                <dd>
+                    <ul class="menu" id="menu">
+                        <volist name='vo["group_menu"]' id="group">
+                            <li><a _href="{$group.url}" data-title="{$group.name}" href="javascript:void(0)">{$group.name}</a></li>
+                        </volist>
+                    </ul>
+                </dd>
+            </dl>
+        </volist>-->
+        <volist name="__MENU__" id="vo">
+            <neq name="vo.url" value="Manage/Index/index">
+                <dl id="menu-{$key}">
+                    <dt><i class="Hui-iconfont">&#xe616;</i>{$vo.title}<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
+                    <volist name="vo.child" id="_child">
+                        <dd>
+                            <ul class="menu" id="menu">
+                                {$_child.class}
+                                <li class="{$_child.class|default=''}"><a _href="{$_child.url|U}" data-title="{$_child.title}" href="javascript:void(0)">{$_child.title}</a></li>
+                            </ul>
+                        </dd>
+                    </volist>
+                </dl>
+            </neq>
+        </volist>
+    </div>
+</aside>
+<div class="dislpayArrow"><a class="pngfix" href="javascript:void(0);" onClick="displaynavbar(this)"></a></div>

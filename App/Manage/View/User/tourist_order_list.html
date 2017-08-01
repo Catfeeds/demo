@@ -1,0 +1,48 @@
+<extend name="Public/base"/>
+
+<block name="body">
+
+    <div class="mt-20">
+		<table class="table table-border table-bordered table-hover table-bg table-sort">
+			<thead>
+				<tr class="text-c">
+					<th width="25"><input type="checkbox" name="" value=""></th>
+					<th width="100">订单号</th>
+					<th width="80">用户手机号</th>	
+					<th width="80">导游类型</th>
+					<th width="80">导游真实姓名</th>
+					<th width="80">导游证号</th>
+					<th width="40">目的地</th>
+					<th width="40">下单时间</th>
+					<th width="40">订单状态</th>
+					<th width="40">支付金额</th>
+					<th width="100">操作</th>
+				</tr>
+			</thead>
+			<tbody>
+				<volist name="list" id="guide">
+					<tr class="text-c">
+						<td></td>
+						<td>{$guide.order_number}</td>
+	                    <td>{$guide.mobile}</td>
+	                    <td>
+	                    	<if condition="$guide.guide_type eq '1'">导游
+							<elseif condition="$guide.guide_type eq '2'"/>随游
+		    					<else />向导
+		    				</if>
+	                    </td>
+	                    <td>{$guide.realname}</td>
+	                    <td>{$guide.guide_card_number}</td>
+	                    <td>{$guide.end_addr}</td>
+	                    <td>{$guide.order_time}</td>
+		    			<td>{$guide.order_status}</td>
+		    			<td>{$guide.pay_money}</td>
+	                    <td>
+	                    	<a href="{:U('order_detail?user_type=0&order_number='.$guide['order_number'])}">点击查看详情</a>
+	                    </td>
+                    </tr>
+	            </volist>
+	        </tbody>
+	    </table>
+	</div>
+</block>

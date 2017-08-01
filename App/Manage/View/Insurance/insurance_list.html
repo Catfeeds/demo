@@ -1,0 +1,223 @@
+<extend name="Public/base"/>
+<block name="body">
+
+    <div class="pd-20">
+        <div class="text-c" id="search">
+            日期范围：
+            <input type="text" onfocus="selecttime(1)"  id="start_time" name='start_time' value="{$list.get.start_time}" class="input-text Wdate search" style="width:120px;">
+            -
+            <input type="text" onfocus="selecttime(2)" id="end_time" name ='end_time' value="{$list.get.end_time}" class="input-text Wdate search" style="width:120px;">
+            <input type="text" name="key" id="key" value="{$list.get.key}" placeholder="手机号/真实姓名" style="width:250px" class="input-text search">
+            <input type="hidden" class="search" name="tourist_id" value="{$list.get.tourist_id}">
+            <label class="form-label col-1">导游类型：</label>
+            <div class="formControls col-1">
+                    <span class="select-box">
+                        <select class="select search" size='1' name="guide_type">
+							<option value="" selected>--请选择--</option>
+							<option value="1" <eq name="list.get.guide_type" value="1">selected</eq>>讲解员</option>
+                            <option value="2" <eq name="list.get.guide_type" value="2">selected</eq>>领路人</option>
+						</select>
+                    </span>
+            </div>
+            <div class="col-1"></div>
+            <label class="form-label col-1">审核状态：</label>
+            <div class="formControls col-1">
+                    <span class="select-box">
+                        <select class="select search" size='1' name="is_auth">
+							<option value="" selected>--请选择--</option>
+							<option value="-1" <eq name="list.get.is_auth" value="-1">selected</eq>>审核失败</option>
+                            <option value="0" <eq name="list.get.is_auth" value="0">selected</eq>>待审核</option>
+                            <option value="1" <eq name="list.get.is_auth" value="1">selected</eq>>已通过</option>
+						</select>
+                    </span>
+            </div>
+            <button name="search" class="btn btn-success" url="{:U('')}" type="button"><i class="Hui-iconfont">&#xe665;</i> 搜索</button>
+        </div>
+
+        <div class="cl pd-5 bg-1 bk-gray mt-20">
+            <span class="l">
+                <a href="javascript:;" onclick="del('{:U(\'Tourist/del_tourist\')}')" class="btn btn-danger radius"><i class="Hui-iconfont">&#xe6e2;</i> 批量删除</a>
+                <a href="javascript:;" onclick="add('添加景区', '{:U(\'Tourist/add_tourist\')}', '800', '500')" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 添加景区</a>
+            </span>
+            <span class="r">共有数据：<strong>{:count($list['list'])}</strong> 条</span>
+        </div>
+
+        <div class="mt-20">
+            <table class="table table-border table-bordered table-hover table-bg table-striped">
+                <thead>
+                <tr>
+                    <th scope="col" colspan="9">{$meta_title}</th>
+                </tr>
+                <tr class="text-c">
+                    <th width="25"><input type="checkbox" name="" value=""></th>
+                    <th width="20">景区编号</th>
+                    <th width="60">景区名称</th>
+                    <th width="60">景区经纬度</th>
+                    <th width="60">景区收费标准（小时）</th>
+                    <th width="60">景区收费标准（次）</th>
+                    <th width="60">入驻时间</th>
+                    <th width="60">状态</th>
+                    <th width="150">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <volist name="list.list" id="vo">
+                    <tr class="text-c">
+                        <td><input type="checkbox" value="{$vo.id}" name="checked"></td>
+                        <td>{$vo.tourist_code}</td>
+                        <td>{$vo.tourist_name}</td>
+                        <td>{$vo.lng_lat}</td>
+                        <td>{$vo.hours_price}/小时</td>
+                        <td>{$vo.times_price}/次</td>
+                        <td>{$vo.add_time|date='Y-m-d',###}</td>
+                        <td class="td-status">
+                            <if condition='$vo.status neq 0'><span class="label label-success radius">已启用</span><else/><span class="label label-default radius">已禁用</span></if>
+                        </td>
+                        <td class="td-manage">
+                            <if condition='$vo.status neq 0'><a style="text-decoration:none" onClick="stop(this, '{$vo.id}','{:U(\'change_status\')}')" href="javascript:;" title="禁用"><i class="Hui-iconfont">&#xe631;</i></a>
+                                <else/>
+                                <a style="text-decoration:none" onClick="start(this, '{$vo.id}','{:U(\'change_status\')}')" href="javascript:;" title="启用"><i class="Hui-iconfont">&#xe615;</i></a>
+                            </if>
+                            <a title="导入景区讲解员" href="javascript:;" onclick="add('导入景区讲解员', '{:U(\'import_guide\',array(\'id\'=>$vo[\'id\']))}')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe645;</i></a>
+                            <a title="用户信息预览" href="javascript:;" onclick="show('查看景区讲解员', '{:U(\'User/guide_list\',array(\'tourist_id\'=>$vo[\'id\']))}')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe695;</i></a>
+                            <a title="删除" href="javascript:;" onclick="del('{:U(\'del_tourist\')}','{$vo.id}')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a>
+                        </td>
+                    </tr>
+                </volist>
+                </tbody>
+            </table>
+        </div>
+        <input type="hidden" id="pages" value="{$list.pages}">
+        <elt name="list.pages" value="1"><div id="page" style="margin-top:5px; text-align:center;display: none;"></div><else/><div id="page" style="margin-top:5px; text-align:center;"></div></elt>
+    </div>
+
+    <block name="script">
+        <script type="text/javascript" src="__OTHER__/lib/laypage/1.2/laypage.js"></script>
+        <script type="text/javascript" src="__OTHER__/lib/datatables/1.10.0/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" src="__OTHER__/lib/My97DatePicker/WdatePicker.js"></script>
+        <script type="text/javascript">
+            /*
+             参数解释：
+             title	标题
+             url		请求的url
+             id		需要操作的数据id
+             w		弹出层宽度（缺省调默认值）
+             h		弹出层高度（缺省调默认值）
+             */
+            /*增加或编辑*/
+            function add(title, url, w, h) {
+                layer_show(title, url, w, h);
+            }
+            /*信息展示*/
+            function show(title, url) {
+                var index = layer.open({
+                    type: 2,
+                    title: title,
+                    content: url,
+                });
+                layer.full(index);
+            }
+            /*删除*/
+            function del(url,id) {
+                var tmp = new Array();
+                if(id == undefined){
+                    $("input[name='checked']").each(function () {
+                        if ($(this).is(':checked'))
+                            tmp.push($(this).val());
+                    })
+                }else {
+                    tmp.push(id);
+                }
+                if (tmp.length <= 0) {
+                    alert('你还没有选择任何内容！');
+                    return false;
+                }
+                layer.confirm('确认要删除吗？', function (index) {
+                    //ajaxPost提交
+                    $.post(url, {'id': tmp}, function (data) {
+                        layer.msg(data.info, {
+                            time: 1000, //不自动关闭
+                            icon: data.status == '1' ? 1 : 0,
+                            end: function () {
+                                window.location.reload();//刷新父窗体
+                            },
+                        });
+                    });
+                });
+            }
+            /*停用*/
+            function stop(obj, id,url) {
+                layer.confirm('确认要停用吗？', function (index) {
+                    $.post(url,{'id':id},function (data) {
+                        if(data.status == 1){
+                            $(obj).parents("tr").find(".td-manage").prepend('<a onClick=\'start(this,"'+id+'","'+url+'")\' href="javascript:;" title="启用" style="text-decoration:none"><i class="Hui-iconfont">&#xe615;</i></a>');
+                            $(obj).parents("tr").find(".td-status").html('<span class="label label-default radius">已禁用</span>');
+                            $(obj).remove();
+                            layer.msg('已停用!', {icon: 5, time: 1000});
+                        }else if(data.status == 0){
+                            layer.msg(data.info, {icon: 5, time: 1000});
+                        }
+                    })
+                });
+            }
+            /*启用*/
+            function start(obj, id,url) {
+                $.post(url,{id:id},function (data) {
+                    if(data.status == 1){
+                        $(obj).parents("tr").find(".td-manage").prepend('<a onClick=\'stop(this,"'+id+'","'+url+'")\' href="javascript:;" title="停用" style="text-decoration:none"><i class="Hui-iconfont">&#xe631;</i></a>');
+                        $(obj).parents("tr").find(".td-status").html('<span class="label label-success radius">已启用</span>');
+                        $(obj).remove();
+                        layer.msg('已启用!', {icon: 6, time: 1000});
+                    }else if(data.status == 0){
+                        layer.msg(data.info, {icon: 5, time: 1000});
+                    }
+                })
+            }
+            // 分页
+            laypage({
+                cont: $('#page'), //容器。值支持id名、原生dom对象，jquery对象,
+                pages: $('#pages').val(), //总页数
+                skip: true, //是否开启跳页
+                groups: 3, //连续显示分页数
+                curr: function(){ //通过url获取当前页，也可以同上（pages）方式获取
+                    var page = location.search.match(/page=(\d+)/);
+                    return page ? page[1] : 1;
+                }(),
+                jump: function(e, first){ //触发分页后的回调
+                    if(!first){ //一定要加此判断，否则初始时会无限刷新
+                        var url = window.location.href;
+                        var query = 'page='+e.curr;
+                        if(url.indexOf('?')>0 ){
+                            if(window.location.search.match(/page=(\d+)/)){
+                                url = url.replace(/page=(\d+)/,query);
+                            }else{
+                                url += '&' + query;
+                            }
+                        }else{
+                            url += '?' + query;
+                        }
+                        window.location.href = url;
+                    }
+                }
+            });
+
+            //搜索功能
+            $("button[name='search']").click(function(){
+                var url = $(this).attr('url');
+                var query  = $('body').find('.search').serialize();
+                query = query.replace(/(&|^)(\w*?\d*?\-*?_*?)*?=?((?=&)|(?=$))/g,'');
+                query = query.replace(/^&/g,'');
+                if( url.indexOf('?')>0 ) url += '&' + query;
+                else url += '?' + query;
+                window.location.href = url;
+            });
+            //回车搜索
+            $("#search").keyup(function(e){
+                if(e.keyCode === 13){
+                    $("button[name='search']").click();
+                    return false;
+                }
+            });
+        </script>
+    </block>
+</block>

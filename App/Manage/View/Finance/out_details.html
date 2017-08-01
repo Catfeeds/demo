@@ -1,0 +1,85 @@
+<extend name="Public/base"/>
+
+<block name="body">
+
+    <div class="cl pd-20" style=" background-color:#5bacb6">
+        <img class="avatar show_image size-XL l" src="{$detail.head_image}">
+        <dl style="margin-left:80px; color:#fff">
+            <dt><span class="f-18">{$detail.mobile}</span></dt>
+        </dl>
+    </div>
+    <div class="pd-20">
+        <table class="table">
+            <tbody>
+            <tr>
+                <th class="text-r" width="120">真实姓名：</th>
+                <td>{$detail.realname}</td>
+            </tr>
+            <tr>
+                <th class="text-r" width="120">持卡人姓名：</th>
+                <td>{$detail.bankcard_username}</td>
+            </tr>
+            <tr>
+                <th class="text-r" width="120">平台内交易总金额：</th>
+                <td>{$detail.history_total_amount}</td>
+            </tr>
+            <tr>
+                <th class="text-r" width="120">当前账户余额：</th>
+                <td>{$detail.now_total_amount}</td>
+            </tr>
+            <tr>
+                <th class="text-r" width="120">第三方转账交易号：</th>
+                <td>{$detail.order_number}</td>
+            </tr>
+            <tr>
+                <th class="text-r" width="120">历史进账总金额：</th>
+                <td>{$detail.in_amount}</td>
+            </tr>
+            <tr>
+                <th class="text-r" width="120">历史出账总金额：</th>
+                <td>{$detail.out_amount}</td>
+            </tr>
+            <tr>
+                <th class="text-r" width="120">提现申请时间：</th>
+                <td>{$detail.create_time}</td>
+            </tr>
+            <tr>
+                <th class="text-r" width="120">提现成功时间：</th>
+                <td>{$detail.request_time}</td>
+            </tr>
+            <tr>
+                <th class="text-r" width="120">转账成功回调时间：</th>
+                <td>{$detail.response_time}</td>
+            </tr>
+            <tr>
+                <th class="text-r" width="120">提现金额：</th>
+                <td>{$detail.withdraw_amount}</td>
+            </tr>
+            <!--<tr>
+                <th class="text-r" width="80">服务类型：</th>
+                <td>
+                    <if condition="$detail.sex eq '1'">导游
+                        <elseif condition="$detail.sex eq '0'"/>男
+                        <else />未设置
+                    </if>
+                </td>
+            </tr>-->
+            </tbody>
+        </table>
+    </div>
+    <script type="text/javascript">
+        //页面层-佟丽娅
+        $('.show_image').click(function(){
+            var content = '<div><img src='+$(this).attr('src')+' /></div>'
+            layer.open({
+                type: 1,
+                title: false,
+                closeBtn: 0,
+                area: '1000px,1000px',
+                skin: 'layui-layer-nobg', //没有背景色
+                shadeClose: true,
+                content: content,
+            });
+        });
+    </script>
+</block>

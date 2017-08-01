@@ -1,0 +1,75 @@
+<extend name="Public/base"/>
+
+<block name="body">
+
+    <div class="cl pd-20" style=" background-color:#5bacb6">
+	  	<img class="avatar show_image size-XL l" src="{$detail.head_image}">
+	  	<dl style="margin-left:80px; color:#fff">
+	    	<dt><span class="f-18">{$detail.mobile}</span></dt>
+	  	</dl>
+	</div>
+	<div class="pd-20">
+	  	<table class="table">
+	    	<tbody>
+	    		<tr>
+	        		<th class="text-r" width="80">昵称：</th>
+        			<td>{$detail.nickname}</td>
+	      		</tr>
+	    		<tr>
+	        		<th class="text-r" width="80">真实姓名：</th>
+        			<td>{$detail.realname}</td>
+	      		</tr>
+	      		<tr>
+	        		<th class="text-r" width="80">身份证：</th>
+        			<td>{$detail.idcard}</td>
+	      		</tr>
+	      		<tr>
+	        		<th class="text-r" width="80">生日：</th>
+        			<td>{$detail.birthday}</td>
+	      		</tr>
+	      		<tr>
+	        		<th class="text-r" width="80">性别：</th>
+        			<td>
+			        	<if condition="$detail.sex eq '1'">女
+							<elseif condition="$detail.sex eq '0'"/>男
+		    					<else />未设置
+		    			</if>
+        			</td>
+	      		</tr>
+	      		<tr>
+			        <th class="text-r">手机：</th>
+			        <td>{$detail.mobile}</td>
+		      	</tr>
+		      	<tr>
+			        <th class="text-r">用户状态：</th>
+			        <td>
+			        	<if condition="$detail.status eq '1'">启用
+		    					<else />禁用
+		    			</if>
+			        </td>
+		      	</tr>
+		      	<!--<tr>
+			        <th class="text-r">操作：</th>
+			        <td>
+			        	<a href="">点击查看该用户订单列表</a>
+			        </td>
+		      	</tr>-->
+	    	</tbody>
+	  	</table>
+	</div>
+	<script type="text/javascript">
+		//页面层-佟丽娅
+		$('.show_image').click(function(){
+			var content = '<div><img src='+$(this).attr('src')+' /></div>'
+			layer.open({
+				type: 1,
+				title: false,
+				closeBtn: 0,
+				area: '1000px,1000px',
+				skin: 'layui-layer-nobg', //没有背景色
+				shadeClose: true,
+				content: content,
+			});
+		});
+	</script>
+</block>

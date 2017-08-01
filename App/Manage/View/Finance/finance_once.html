@@ -1,0 +1,130 @@
+<extend name="Public/base"/>
+
+<block name="body">
+
+    <div class="cl pd-20" style=" background-color:#5bacb6">
+        <dl style="margin-left:80px; color:#fff;text-align: center">
+            <dt><span class="f-18">订单状态：
+					<if condition="$server_status eq '0'">待确认
+                        <elseif condition="$server_status eq '1'"/>已确认开始
+                        <elseif condition="$server_status eq '2'"/>已取消
+                        <elseif condition="$server_status eq '3'"/>服务进行中
+                        <elseif condition="$server_status eq '4'"/>服务结束
+                        <elseif condition="$server_status eq '5'"/>已拒接
+                        <elseif condition="$server_status eq '6'"/>已提交工单
+                        <elseif condition="$server_status eq '7'"/>导游已到达用户附近
+                        <else />- -
+                    </if>
+			</span></dt>
+        </dl>
+    </div>
+    <div class="pd-20">
+        <table class="table" border="1 solid red" style="width: 1000px;margin: 0 auto">
+            <tbody>
+            <tr>
+                <th  colspan="4" style="text-align: center">用户详情</th>
+            </tr>
+            <tr>
+                <th class="text-r" width="100">用户电话：</th>
+                <td width="381px">{$detail.user_mobile}</td>
+                <th class="text-r" width="100">服务人员电话：</th>
+                <td width="381px">{$detail.guide_mobile}</td>
+            </tr>
+            <tr>
+                <th class="text-r" width="100">服务类型：</th>
+                <td width="381px">
+                    <if condition="$detail.server_type eq '0'">即时服务
+                        <elseif condition="$detail.server_type eq '1'"/>预约服务
+                        <else />- -
+                    </if>
+                </td>
+                <th class="text-r" width="100">服务类型：</th>
+                <td width="381px">
+                    <if condition="$detail.guide_type eq '1'">讲解员
+                        <elseif condition="$detail.guide_type eq '2'"/>领路人
+                        <else /> - -
+                    </if>
+                </td>
+            </tr>
+            <tr>
+                <th class="text-r" width="100">用户昵称：</th>
+                <td width="381px">{$detail.user_realname}</td>
+                <th class="text-r" width="100">服务人员：</th>
+                <td width="381px">{$detail.guide_realname}</td>
+            </tr>
+            <tr>
+                <th class="text-r" width="100">下单时间：</th>
+                <td colspan="3">{$detail.order_time}</td>
+            </tr>
+            </tbody>
+        </table>
+        <table class="table" border="1 solid red" style="width: 1000px;margin: 50px auto">
+            <tbody>
+            <tr>
+                <th  colspan="4" style="text-align: center">订单详情</th>
+            </tr>
+            <tr>
+                <th class="text-r" width="100">开始服务：</th>
+                <td width="381px">{$detail.server_start_time}</td>
+                <th class="text-r" width="100">服务时长：</th>
+                <td width="381px">{$detail.server_date}</td>
+            </tr>
+            <tr>
+                <th class="text-r" width="100">结束服务：</th>
+                <td width="381px">{$detail.server_end_time}</td>
+                <th class="text-r" width="100">计费方式：</th>
+                <td width="381px">
+                    <if condition="$detail.charging_type eq '1'">小时计费
+                        <elseif condition="$detail.charging_type eq '2'"/>按次计费
+                        <else />
+                    </if>
+                </td>
+            </tr>
+            <tr>
+                <th class="text-r" width="100">服务费：</th>
+                <td width="381px">{$detail.order_money}</td>
+                <th class="text-r" width="100">小费：</th>
+                <td width="381px">{$detail.tip_money}</td>
+            </tr>
+            <tr>
+                <th class="text-r" width="100">优惠：</th>
+                <td width="381px">{$detail.rebate_money}</td>
+                <th class="text-r" width="100">实际支付：</th>
+                <td width="381px">{$detail.pay_money}</td>
+            </tr>
+            <tr>
+                <th class="text-r" width="100">支付方式：</th>
+                <td width="381px">
+                    <if condition="$detail.pay_channel eq '1'">支付宝
+                        <elseif condition="$detail.pay_channel eq '2'"/>微信支付
+                        <else />
+                    </if>
+                </td>
+                <th class="text-r" width="100">支付账号：</th>
+                <td width="381px">{$detail.pay_account}</td>
+            </tr>
+            <tr>
+                <th class="text-r" width="100">出发地：</th>
+                <td width="381px">{$detail.start_addr}</td>
+                <th class="text-r" width="100">目的地：</th>
+                <td width="381px">{$detail.end_addr}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <script type="text/javascript">
+        //页面层-佟丽娅
+        $('.show_image').click(function(){
+            var content = '<div><img src='+$(this).attr('src')+' /></div>'
+            layer.open({
+                type: 1,
+                title: false,
+                closeBtn: 0,
+                area: '1000px,1000px',
+                skin: 'layui-layer-nobg', //没有背景色
+                shadeClose: true,
+                content: content,
+            });
+        });
+    </script>
+</block>

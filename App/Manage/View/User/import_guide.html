@@ -1,0 +1,70 @@
+<extend name='Public/base'/>
+<block name='body'>
+    <div class="pd-20">
+        <form action="" method="post" class="form form-horizontal" id="form-admin-add">
+            <div class="row cl">
+                <label class="form-label col-3"><span class="c-red">*</span>讲解员资料：</label>
+                <div class="formControls col-5">
+                    <!--<input type="file" id="file" name="file">
+                    <input type="hidden" id="flag" name="flag" value="ajax文件上传"/>-->
+                    <span class="btn-upload form-group">
+                        <input class="input-text upload-url radius" type="text" id="flag" name="flag" readonly>
+                        <a href="javascript:void(0);" class="btn btn-primary radius"><i class="iconfont">&#xf0020;</i> 浏览文件</a>
+                        <input type="file" multiple name="excel" accept=".xls,.xlsx,.cvs" id="excel" class="input-file">
+                    </span>
+                </div>
+            </div>
+            <div class="row cl">
+                <div class="col-9 col-offset-3">
+                    <input class="btn btn-primary radius" type="button" id="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+                </div>
+            </div>
+        </form>
+    </div>
+    <block name='script'>
+        <script type="text/javascript" src="__OTHER__/lib/ajaxFileUpload/ajaxfileupload.js"></script>
+        <script type="text/javascript">
+            //上传文件
+            $("#submit").click(function() {
+                $.ajaxFileUpload({
+                    url: '',
+                    type: 'post',
+                    secureuri: false, //一般设置为false
+                    fileElementId: 'excel', // 上传文件的id、name属性名
+                    //dataType: 'xml', //返回值类型，一般设置为json、application/json
+                    elementIds: flag, //传递参数到服务器
+                    success: function(data, status){
+                        data = $(data).find("body").text();//获取返回的字符串
+                        data = $.parseJSON(data);//把字符串转化为json对象
+                        if (data.status == 1) {
+                            parent.layer.alert(data.info, {
+                                time: 0, //不自动关闭
+                                icon: 1,
+                                btn: ['确定', '继续添加'],
+                                yes: function (index) {
+                                    parent.layer.close(index);
+                                    window.parent.location.reload();//刷新父窗体
+                                    parent.layer.close(parent.layer.getFrameIndex(window.name));//关闭当前窗体
+                                },
+                                cancel: function (index) {
+                                    parent.layer.close(index);
+                                    //window.location.reload();
+                                },
+                            });
+                        }else if(data.status == 0){
+                            parent.layer.alert(data.info, {
+                                time: 0, //不自动关闭
+                                icon: 2,
+                                btn: ['确定'],
+                                yes: function (index) {
+                                    parent.layer.close(index);
+                                },
+                            });
+                        }
+                    },
+                });
+                //return false;
+            });
+        </script>
+    </block>
+</block>

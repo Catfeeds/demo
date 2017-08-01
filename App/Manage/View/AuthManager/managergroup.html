@@ -1,0 +1,155 @@
+<extend name='Public/base'/>
+<block name='body'>
+    <div class="pd-20">
+        <!--<div id="tab_demo" class="HuiTab">
+            <div class="tabBar cl"><span class="current">分组授权</span><span><a href="{:U('AuthManager/user',array('group_name'=>I('group_name') ,'group_id'=> I('group_id')))}">成员授权</a></span></div>
+        </div>-->
+        <form action="{:U('writeGroup')}" method="post" class="form form-horizontal" id="form-add">
+            <volist name="node_list" id="node" key="_k">
+                <div class="panel panel-default radius mt-20">
+                    <div class="panel-header">
+                        <div class="check-box">
+                            <input class="auth_rules rules_all show_title" type="checkbox" id="checkbox-{$_k}" name="rules[]" value="{$node.id}" <eq name="node.title" value="首页">checked onclick='return false;'</eq>>
+                            <label for="checkbox-{$_k}" class="show_title">{$node.title}</label>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+
+                        <volist name="node['child']" id="child" key="k" empty="暂无可操作权限">
+                            <span class="rule_check">
+                                <div class="check-box">
+                                    <input class="auth_rules rules_row show_title" type="checkbox"  id="checkbox-{$_k}-{$k}" name="rules[]" value="<?php echo $child['id'] ?>">
+                                    <label for="checkbox-{$_k}-{$k}" class="show_title" <notempty name="child['tip']">title='{$child.tip}'</notempty>>{$child.title}</label>
+                                </div>
+                                <notempty name="child['operator']">
+                                    <div style="text-indent: 2em">
+                                        <span class="child_row">
+                                        <volist name="child['operator']" id="op" key="k1">
+                                            <div class="check-box">
+                                                <input class="auth_rules show_title auth_child" type="checkbox"  id="checkbox-{$_k}-{$k}-{$k1}" name="rules[]" value="<?php echo $op['id'] ?>">
+                                                <label for="checkbox-{$_k}-{$k}-{$k1}" class="show_title" <notempty name="op['tip']">title='{$op.tip}'</notempty>>{$op.title}</label>
+                                            </div>
+                                        </volist>
+                                        </span>
+                                    </div>
+                                </notempty>
+                            </span>
+                            <neq name="k" value="{:count(node['child'])}"><br></neq>
+                        </volist>
+                    </div>
+                </div>
+            </volist>
+            <input type="hidden" name="id" value="{$this_group.id}" />
+            <div class="row cl">
+                <div class="col-9 col-offset-3">
+                    <input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+                </div>
+            </div>
+        </form>
+    </div>
+    <block name='script'>
+        <script type="text/javascript" src="__OTHER__/lib/qtip/jquery.qtip.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="__OTHER__/lib/qtip/jquery.qtip.min.css" media="all">
+        <script type="text/javascript">
+            $(function () {
+                $("#form-add").Validform({
+                    tiptype: 2,
+                    ajaxPost: true, //ajax提交
+                    postonce: true, //提交一次
+                    callback: function (data) {
+                        if (data.status == 1) {
+                            console.log(data.info);
+                            parent.layer.alert(data.info, {
+                                time: 0, //不自动关闭
+                                icon: 1,
+                                btn: ['确定', '继续添加'],
+                                yes: function (index) {
+                                    parent.layer.close(index);
+                                    window.parent.location.reload();//刷新父窗体
+                                    parent.layer.close(parent.layer.getFrameIndex(window.name));//关闭当前窗体
+                                },
+                                cancel: function (index) {
+                                    parent.layer.close(index);
+                                    window.location.reload();
+                                },
+                            });
+                        }else if(data.status == 0){
+                            parent.layer.alert(data.info, {
+                                time: 0, //不自动关闭
+                                icon: 2,
+                                btn: ['确定'],
+                                yes: function (index) {
+                                    parent.layer.close(index);
+                                },
+                            });
+                        }
+                    }
+                });
+
+                /*默认分组设置*/
+                var rules = [{$this_group.rules}];
+                $('.auth_rules').each(function(){
+                    if( $.inArray( parseInt(this.value,10),rules )>-1 ){
+                        $(this).prop('checked',true);
+                    }
+                    if(this.value==''){
+                        $(this).closest('span').remove();
+                    }
+                });
+
+                //全选节点
+                $('.rules_all').on('change',function(){
+                    $(this).closest('.panel').find('.panel-body').find('input').prop('checked',this.checked);
+                });
+                $('.rules_row').on('change',function(){
+                    if(this.checked === false){
+                        if($(this).closest('.panel').find('.panel-body').find('.rule_check').find('.rules_row:checked').length < 1)
+                            $(this).closest('.panel').find('.panel-header').find('.rules_all').prop('checked',this.checked);
+                        $(this).closest('.rule_check').find('.child_row').find('input').prop('checked',this.checked);
+                    }else if(this.checked === true){
+                        $(this).closest('.panel').find('.panel-header').find('.rules_all').prop('checked',this.checked);
+                        $(this).closest('.rule_check').find('.child_row').find('input').prop('checked',this.checked);
+                    }
+                });
+                $('.auth_child').on('change',function(){
+                    if(this.checked === false){
+                        /*if($(this).closest('.rule_check').find('.auth_child:checked').length < 1)
+                            $(this).closest('.rule_check').find('.rules_row').prop('checked',this.checked);//选中父级*/
+                        if($(this).closest('.panel').find('.panel-body').find('.rule_check').find('.rules_row:checked').length < 1)
+                            $(this).closest('.panel').find('.panel-header').find('.rules_all').prop('checked',this.checked)
+                    }else if(this.checked === true){
+                        $(this).closest('.rule_check').find('.rules_row').prop('checked',this.checked);//选中父级
+                        $(this).closest('.panel').find('.panel-header').find('.rules_all').prop('checked',this.checked)
+                    }
+                });
+
+                $('.show_title').each(function(){
+                    $(this).qtip({
+                        content: {
+                            text: $(this).attr('title'),
+                            title: $(this).text()
+                        },
+                        position: {
+                            my: 'bottom center',
+                            at: 'top center',
+                            target: $(this)
+                        },
+                        style: {
+                            classes: 'qtip-dark',
+                            tip: {
+                                corner: true,
+                                mimic: false,
+                                width: 10,
+                                height: 10
+                            }
+                        }
+                    });
+                });
+
+                $('select[name=group]').change(function(){
+                    location.href = this.value;
+                });
+            });
+        </script>
+    </block>
+</block>

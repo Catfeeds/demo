@@ -1,0 +1,84 @@
+<extend name='Public/base'/>
+<block name='body'>
+    <div class="pd-20">
+        <form action="{:U('writeGroup')}" method="post" class="form form-horizontal" id="form-admin-add">
+            <div class="row cl">
+                <label class="form-label col-3"><span class="c-red">*</span>用户组名称：</label>
+                <div class="formControls col-5">
+                    <input type="text" class="input-text radius" placeholder="如：客服部" name="title" id="title">
+                </div>
+                <div class="col-4"> </div>
+            </div>
+            <div class="row cl">
+                <label class="form-label col-3">分组描述：</label>
+                <div class="formControls col-5">
+                    <textarea name="description" id="auth-description" cols="" rows="" class="textarea radius" placeholder="分组描述……"></textarea>
+                </div>
+                <div class="col-4"> </div>
+            </div>
+            <div class="row cl">
+                <div class="col-9 col-offset-3">
+                    <input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+                </div>
+            </div>
+        </form>
+    </div>
+    <block name='script'>
+        <script type="text/javascript" src="__OTHER__/lib/My97DatePicker/WdatePicker.js"></script>
+        <script type="text/javascript">
+            $("#form-admin-add").Validform({
+                tiptype: 2,
+                ajaxPost: true, //ajax提交
+                postonce: true, //提交一次
+                callback: function (data) {
+                    if (data.status == 1) {
+                        parent.layer.alert(data.info, {
+                            time: 0, //不自动关闭
+                            icon: 1,
+                            btn: ['确定', '继续添加'],
+                            yes: function (index) {
+                                parent.layer.close(index);
+                                window.parent.location.reload();//刷新父窗体
+                                parent.layer.close(parent.layer.getFrameIndex(window.name));//关闭当前窗体
+                            },
+                            cancel: function (index) {
+                                parent.layer.close(index);
+                                window.location.reload();
+                            },
+                        });
+                    }
+                }
+            });
+            //时间选择
+            function selecttime(flag) {
+                switch (flag) {
+                    case 1:
+                        var end_date = $("#end_time").val();
+                        if (end_date != "") {
+                            var now_date = new Date();
+                            var y = now_date.getFullYear();
+                            var m = now_date.getMonth() + 2;
+                            var d = now_date.getDate();
+                            var now_time = new Date(y + '/' + m + '/' + d);
+                            if (new Date(end_date.replace("-", "/").replace("-", "/")) <= now_time) {
+                                WdatePicker({dateFmt: 'yyyy-MM-dd', minDate: '%y-%M-%d', maxDate: end_date});
+                            } else {
+                                WdatePicker({dateFmt: 'yyyy-MM-dd', minDate: '%y-%M-%d', maxDate: '%y-{%M+1}-%d'});
+                            }
+                        } else {
+                            WdatePicker({dateFmt: 'yyyy-MM-dd', minDate: '%y-%M-%d', maxDate: '%y-{%M+1}-%d'});
+                        }
+                        break;
+                    case 2:
+                        var startTime = $("#start_time").val();
+                        if (startTime != "") {
+                            WdatePicker({dateFmt: 'yyyy-MM-dd', minDate: startTime, maxDate: '%y-{%M+3}-%d'});
+                        } else {
+                            WdatePicker({dateFmt: 'yyyy-MM-dd', minDate: '%y-%M-%d', maxDate: '%y-{%M+3}-%d'});
+                        }
+                        break;
+                }
+            }
+        </script>
+    </block>
+</block>

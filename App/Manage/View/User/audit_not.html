@@ -1,0 +1,87 @@
+<extend name='Public/base'/>
+<block name='body'>
+    <div class="pd-20">
+        <form action="" method="post" enctype="multipart/form-data" class="form form-horizontal" id="form-add">
+
+            <div class="row cl">
+                <label class="form-label col-3"><span class="c-red">*</span>订单号：</label>
+                <div class="formControls col-5">
+                    <!--<input type="file" id="file" name="file">
+                    <input type="hidden" id="flag" name="flag" value="ajax文件上传"/>-->
+                    <span class="btn-upload form-group">{$info['link_id']}</span>
+                </div>
+            </div>
+            <div class="row cl">
+                <label class="form-label col-3"><span class="c-red">*</span>初始价格：</label>
+                <div class="formControls col-5">
+                    <!--<input type="file" id="file" name="file">
+                    <input type="hidden" id="flag" name="flag" value="ajax文件上传"/>-->
+                    <span class="btn-upload form-group">￥{$info['pay_money']}</span>
+                </div>
+            </div>
+            <div class="row cl">
+                <label class="form-label col-3"><span class="c-red">*</span>减免后价格：</label>
+                <div class="formControls col-5">
+                    <!--<input type="file" id="file" name="file">
+                    <input type="hidden" id="flag" name="flag" value="ajax文件上传"/>-->
+                    <span class="btn-upload form-group" id="condition">￥{$info['condition']}</span>
+                </div>
+            </div>
+            <div class="row cl">
+                <label class="form-label col-3"><span class="c-red">*</span>不通过原因：</label>
+                <div class="formControls col-5">
+                    <textarea name="check_msg" id="check_msg" cols="" rows="" class="textarea radius" placeholder="修改原因……" datatype = '*1-250' nullmsg="修改原因不能为空！">{$info.update_content|default=''}</textarea>
+                </div>
+                <div class="col-4"> </div>
+            </div>
+            <div class="row cl">
+                <div class="col-9 col-offset-3">
+                    <input type="hidden" name="order_number" value="{$order_number}">
+                    <input class="btn btn-primary radius" type="button" condition="{$info['condition']}"  id="submit" url="{:U(\'audit_status\',array('check_result'=>$info['check_result'],'id'=>$info['id'],'link_id'=>$info['link_id'],'pay_money'=>$info['pay_money']))}" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+                </div>
+            </div>
+        </form>
+    </div>
+    <block name='script'>
+        <script type="text/javascript" src="__OTHER__/lib/laypage/1.2/laypage.js"></script>
+        <script type="text/javascript" src="__OTHER__/lib/My97DatePicker/WdatePicker.js"></script>
+        <script type="text/javascript">
+            //验证
+            $(function () {
+                $('#submit').click(function(){
+                    var check_msg = $('#check_msg').val();
+                    var url = $('#submit').attr('url');
+                    var condition = $('#submit').attr('condition');
+                    $.post(url,{check_msg:check_msg,condition:condition},function(data){
+                        if (data.status == 1) {
+                            console.log(data.info);
+                            parent.layer.alert(data.info, {
+                                time: 0, //不自动关闭
+                                icon: 1,
+                                btn: ['确定', '继续添加'],
+                                yes: function (index) {
+                                    parent.layer.close(index);
+                                    window.parent.location.reload();//刷新父窗体
+                                    parent.layer.close(parent.layer.getFrameIndex(window.name));//关闭当前窗体
+                                },
+                                cancel: function (index) {
+                                    parent.layer.close(index);
+                                    window.location.reload();
+                                },
+                            });
+                        }else if(data.status == 0){
+                            parent.layer.alert(data.info, {
+                                time: 0, //不自动关闭
+                                icon: 2,
+                                btn: ['确定'],
+                                yes: function (index) {
+                                    parent.layer.close(index);
+                                },
+                            });
+                        }
+                    });
+                });
+            });
+        </script>
+    </block>
+</block>

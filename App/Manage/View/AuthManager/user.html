@@ -1,0 +1,268 @@
+<extend name="Public/base"/>
+
+<block name="body">
+	<div class="pd-20">
+		<!--<div class="text-c" id="search">日期范围：
+			<input type="text" onfocus="selecttime(1)"  id="start_time" name='start_time' value="{$list.get.start_time}" class="input-text Wdate search" style="width:120px;">
+			-
+			<input type="text" onfocus="selecttime(2)" id="end_time" name ='end_time' value="{$list.get.end_time}" class="input-text Wdate search" style="width:120px;">
+			<input type="text" name="key" id="key" value="{$list.get.key}" placeholder="手机号/真实姓名" style="width:250px" class="input-text search">
+			<input type="hidden" class="search" name="tourist_id" value="{$list.get.tourist_id}">
+			<label class="form-label col-1">导游类型：</label>
+			<div class="formControls col-1">
+                    <span class="select-box">
+                        <select class="select search" size='1' name="guide_type">
+							<option value="" selected>&#45;&#45;请选择&#45;&#45;</option>
+							<option value="1" <eq name="list.get.guide_type" value="1">selected</eq>>讲解员</option>
+							<option value="2" <eq name="list.get.guide_type" value="2">selected</eq>>领路人</option>
+						</select>
+                    </span>
+			</div>
+			<div class="col-1"></div>
+			<label class="form-label col-1">审核状态：</label>
+			<div class="formControls col-1">
+                    <span class="select-box">
+                        <select class="select search" size='1' name="is_auth">
+							<option value="" selected>&#45;&#45;请选择&#45;&#45;</option>
+							<option value="-1" <eq name="list.get.is_auth" value="-1">selected</eq>>审核失败</option>
+							<option value="0" <eq name="list.get.is_auth" value="0">selected</eq>>待审核</option>
+							<option value="1" <eq name="list.get.is_auth" value="1">selected</eq>>已通过</option>
+						</select>
+                    </span>
+			</div>
+			<button name="search" class="btn btn-success" url="{:U('')}" type="button"><i class="Hui-iconfont">&#xe665;</i> 搜索</button>
+		</div>-->
+		<div class="cl pd-5 bg-1 bk-gray mt-20">
+            <span class="l">
+                <a href="javascript:;" onclick="del('{:U(\'del_coupon\')}')" class="btn btn-danger radius"><i class="Hui-iconfont">&#xe6e2;</i> 批量删除</a>
+				<!--<a href="javascript:;" onclick="add('添加管理员分组', '{:U(\'AuthManager/createGroup\')}', '800', '500')" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 添加分组</a>-->
+            </span>
+			<span class="r">共有数据：<strong>{:count($list['list'])}</strong> 条</span>
+		</div>
+		<div class="mt-20">
+			<table class="table table-border table-bordered table-hover table-bg table-striped">
+				<thead>
+				<tr class="text-c">
+					<th width="25"><input type="checkbox" name="" value=""></th>
+					<th width="20">UID</th>
+					<th width="60">昵称</th>
+					<th width="60">最后登录时间</th>
+					<th width="60">最后登录IP</th>
+					<th width="60">状态</th>
+					<th width="150">操作</th>
+				</tr>
+				</thead>
+				<tbody>
+				<volist name="list.list" id="vo">
+					<tr class="text-c">
+						<td><input type="checkbox" value="{$vo.uid}" name="checked"></td>
+						<td>{$vo.uid}</td>
+						<td>{$vo.nickname}</td>
+						<td>{$vo.last_login_time|date='Y-m-d H:i:s',###}</td>
+						<td>{:long2ip($vo['last_login_ip'])}</td>
+						<td class="td-status">
+							<if condition='$vo.status neq 0'><span class="label label-success radius">已启用</span><else/><span class="label label-default radius">已禁用</span></if>
+						</td>
+						<td>
+							<!--<if condition='$vo.status neq 0'><a style="text-decoration:none" onClick="stop(this, '{$vo.id}','{:U(\'change_status\')}')" href="javascript:;" title="禁用"><i class="Hui-iconfont">&#xe631;</i></a>
+								<else/>
+								<a style="text-decoration:none" onClick="start(this, '{$vo.id}','{:U(\'change_status\')}')" href="javascript:;" title="启用"><i class="Hui-iconfont">&#xe615;</i></a>
+							</if>-->
+							<a title="解除授权"class="btn btn-danger radius mr-20 ajax-get" href="javascript:;" url="{:U('removeFromGroup',array('uid'=>$vo['uid'],'group_id'=>I('group_id')))}" style="text-decoration:none">解除授权</a>
+						</td>
+					</tr>
+				</volist>
+				</tbody>
+			</table>
+		</div>
+		<input type="hidden" id="pages" value="{$list.pages}">
+		<elt name="list.pages" value="1"><div id="page" style="margin-top:5px; text-align:center;display: none;"></div><else/><div id="page" style="margin-top:5px; text-align:center;"></div></elt>
+		<form action="{:U('addToGroup')}" method="post" class="form form-horizontal" id="form-add">
+			<div class="row cl">
+				<label class="form-label col-9"></label>
+				<div class="formControls col-2">
+					<input type="text" class="input-text radius" placeholder="请输入uid,多个用英文逗号分隔" name="uid" id="uid" datatype = 'n' nullmsg="管理员登录密码不能为空！">
+				</div>
+				<input type="hidden" name="group_id" value="{$this_group.id}" />
+				<div class="col-1"> <input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;"></div>
+			</div>
+		</form>
+	</div>
+
+	<block name="script">
+		<script type="text/javascript" src="__OTHER__/lib/laypage/1.2/laypage.js"></script>
+		<script type="text/javascript" src="__OTHER__/lib/My97DatePicker/WdatePicker.js"></script>
+		<script type="text/javascript">
+			/*管理员-增加*/
+			function add(title, url, w, h) {
+				layer_show(title, url, w, h);
+			}
+			/*信息展示*/
+			function show(title, url) {
+				var index = layer.open({
+					type: 2,
+					title: title,
+					content: url,
+				});
+				layer.full(index);
+			}
+			// 分页
+			laypage({
+				cont: $('#page'), //容器。值支持id名、原生dom对象，jquery对象,
+				pages: $('#pages').val(), //总页数
+				skip: true, //是否开启跳页
+				groups: 3, //连续显示分页数
+				curr: function(){ //通过url获取当前页，也可以同上（pages）方式获取
+					var page = location.search.match(/page=(\d+)/);
+					return page ? page[1] : 1;
+				}(),
+				jump: function(e, first){ //触发分页后的回调
+					if(!first){ //一定要加此判断，否则初始时会无限刷新
+						var url = window.location.href;
+						var query = 'page='+e.curr;
+						if(url.indexOf('?')>0 ){
+							if(window.location.search.match(/page=(\d+)/)){
+								url = url.replace(/page=(\d+)/,query);
+							}else{
+								url += '&' + query;
+							}
+						}else{
+							url += '?' + query;
+						}
+						window.location.href = url;
+					}
+				}
+			});
+
+			$("#form-add").Validform({
+				tiptype: 2,
+				ajaxPost: true, //ajax提交
+				postonce: true, //提交一次
+				callback: function (data) {
+					layer.msg(data.info, {
+						time: 1000, //不自动关闭
+						icon: data.status == '1' ? 1 : 0,
+						end: function () {
+							window.location.reload();//刷新父窗体
+						},
+					});
+					/*if (data.status == 1) {
+						console.log(data.info);
+						parent.layer.alert(data.info, {
+							time: 0, //不自动关闭
+							icon: 1,
+							btn: ['确定', '继续添加'],
+							yes: function (index) {
+								parent.layer.close(index);
+								window.parent.location.reload();//刷新父窗体
+								parent.layer.close(parent.layer.getFrameIndex(window.name));//关闭当前窗体
+							},
+							cancel: function (index) {
+								parent.layer.close(index);
+								window.location.reload();
+							},
+						});
+					}else if(data.status == 0){
+						parent.layer.alert(data.info, {
+							time: 0, //不自动关闭
+							icon: 2,
+							btn: ['确定'],
+							yes: function (index) {
+								parent.layer.close(index);
+							},
+						});
+					}*/
+				}
+			});
+
+			//解除授权
+			$('.ajax-get').click(function () {
+				$.get($(this).attr('url'),{},function (data) {
+					layer.msg(data.info, {
+						time: 1000, //不自动关闭
+						icon: data.status == '1' ? 1 : 0,
+						end: function () {
+							window.location.reload();//刷新父窗体
+						},
+					});
+				})
+			})
+
+			//搜索功能
+			$("button[name='search']").click(function(){
+				var url = $(this).attr('url');
+				var query  = $('body').find('.search').serialize();
+				query = query.replace(/(&|^)(\w*?\d*?\-*?_*?)*?=?((?=&)|(?=$))/g,'');
+				query = query.replace(/^&/g,'');
+				if( url.indexOf('?')>0 ) url += '&' + query;
+				else url += '?' + query;
+				window.location.href = url;
+			});
+			//回车搜索
+			$("#search").keyup(function(e){
+				if(e.keyCode === 13){
+					$("button[name='search']").click();
+					return false;
+				}
+			});
+
+			//时间选择
+			function selecttime(flag) {
+				switch (flag) {
+					case 1:
+						var end_date = $("#end_time").val();
+						if (end_date != "") {
+							var now_date = new Date();
+							var y = now_date.getFullYear();
+							var m = now_date.getMonth() + 2;
+							var d = now_date.getDate();
+							var now_time = new Date(y + '/' + m + '/' + d);
+							if (new Date(end_date.replace("-", "/").replace("-", "/")) <= now_time) {
+								WdatePicker({dateFmt: 'yyyy-MM-dd', minDate: '', maxDate: end_date});
+							} else {
+								WdatePicker({dateFmt: 'yyyy-MM-dd', minDate: '', maxDate: '%y-%M-%d'});
+							}
+						} else {
+							WdatePicker({dateFmt: 'yyyy-MM-dd', minDate: '', maxDate: '%y-%M-%d'});
+						}
+						break;
+					case 2:
+						var startTime = $("#start_time").val();
+						if (startTime != "") {
+							WdatePicker({dateFmt: 'yyyy-MM-dd', minDate: startTime, maxDate: '%y-{%M}-%d'});
+						} else {
+							WdatePicker({dateFmt: 'yyyy-MM-dd', minDate: '', maxDate: '%y-%M-%d'});
+						}
+						break;
+				}
+			}
+			function del(url) {
+				var tmp = new Array();
+				$("input[name='checked']").each(function () {
+					if ($(this).is(':checked'))
+						tmp.push($(this).val());
+				})
+				if (tmp.length <= 0) {
+					alert('你还没有选择任何内容！');
+					return false;
+				}
+				layer.confirm('确认要删除吗？', function (index) {
+					//此处请求后台程序，下方是成功后的前台处理……
+					//ajaxPost提交
+					$.post(url, {'id': tmp}, function (data) {
+						parent.layer.alert(data.info, {
+							time: 3000, //不自动关闭
+							icon: data.status == '1' ? 1 : 0,
+							btn: ['确定', ],
+							end: function () {
+								window.location.reload();//刷新父窗体
+							},
+						});
+					});
+					$(obj).parents("tr").remove();
+					layer.msg('已删除!', {icon: 1, time: 1000});
+				});
+			}
+		</script>
+	</block>
+</block>

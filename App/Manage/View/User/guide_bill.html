@@ -1,0 +1,152 @@
+<extend name="Public/base"/>
+<block name="body">
+    <div class="pd-20">
+        <div class="text-c" id="search" style="height: 80px;">
+            <div style="width: 1200px; height: 100px; margin: 0 auto;">
+            <table style="float: left;height: 100%;width: 20%;margin-left: 10%">
+                <tr>
+                    <td rowspan="3">
+                        <img class="avatar show_image size-XL l" style="width: 110px;height: 100px"  src="{$detail.head_image}">
+                    </td>
+                    <td style="font-size: 20px;font-weight: bold;color: red">{$detail.realname}</td>
+                    <td><img src="__PUBLIC__/Manage/images/yes.png"></td>
+                </tr>
+                <tr>
+                    <td style="font-size: 18px; color: red">
+                        <if condition="$detail.guide_type eq '1'">讲解员
+                            <elseif condition="$detail.guide_type eq '2'"/>领路人
+                            <else />导游
+                        </if>
+                    </td>
+
+                </tr>
+                <tr style="font-size: 20px;">
+                    <td colspan="2"><span style="color: red">{$detail.phone}</span></td>
+                </tr>
+            </table>
+                <div style="width: 40%;height: 100%;float: right;">
+                    <div style="width: 30%;height: 100%;float: left;border: 1px solid #EAEAEA">
+                        <p style="font-size: 16px;color: red;margin-top: 20px">{$detail.server_times}</p>
+                        <p style="font-size: 16px">累计接单</p>
+                    </div>
+                    <div style="width: 30%;height: 100%;float: left;border: 1px solid #EAEAEA">
+                        <p style="font-size: 16px;color: red;margin-top: 20px">￥{$detail.now_total_amount}</p>
+                        <p style="font-size: 16px">余额</p>
+                    </div>
+                    <div style="width: 30%;height: 100%;float: left;border: 1px solid #EAEAEA">
+                        <p style="font-size: 16px;color: red;margin-top: 20px">￥{$detail.out_amount}</p>
+                        <p style="font-size: 16px">累计提现</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="cl pd-5 bg-1 bk-gray mt-20" style="margin-top: 35px">
+           <div style="height: 100%;width:100%;margin: 0 auto">
+                <span>
+                    <a title="收入" href="javascript:;" abc= '1' url="{:U('guide_bill',array('uid'=>I('uid')))}" class="jump ml-5 btn btn-warning radius" style="text-decoration:none;width: 50%;height:100%;float: left">收入</a>
+            </span>
+              <span>
+                    <a title="提现" href="javascript:;" abc = '-1' url="{:U('guide_bill',array('uid'=>I('uid')))}" class="jump ml-5 btn btn-danger radius" style="text-decoration:none;width: 49%;height:100%;float: right">提现</a>
+            </span>
+           </div>
+        </div>
+        <div class="mt-20">
+            <table class="table table-border table-bordered table-hover table-bg table-striped">
+                <thead>
+                <tr class="text-c">
+                    <!--<th width="15"><input type="checkbox" name="" value=""></th>-->
+                    <th width="50">订单号</th>
+                    <th width="20">时间</th>
+                    <th width="50">服务费</th>
+                    <th width="40">小费</th>
+                    <th width="40">优惠补贴</th>
+                    <th width="40">减免</th>
+                    <th width="40">佣金比例</th>
+                    <th width="35">佣金</th>
+                    <th width="25">实际净收</th>
+                    <th width="40">余额</th>
+                </tr>
+                </thead>
+                <tbody>
+                <volist name="list.list" id="vo">
+                    <tr class="text-c">
+                        <!--<td><input type="checkbox" value="{$vo.uid}" name="checked"></td>-->
+                        <td>{$vo.order_number}</td>
+                        <td>{$vo.deal_time}</td>
+                        <td>{$vo.order_money}{$vo.is_withdraw}</td>
+                        <td>{$vo.tip_money}</td>
+                        <td>{$vo.rebate_money}</td>
+                        <td>{$vo.derate_money}</td>
+                        <td>{$vo.proportion}</td>
+                        <td>{$vo.manage_amount}</td>
+                        <td>{$vo.profit_amount}</td>
+                        <td>{$vo.now_total_amount}</td>
+                    </tr>
+                </volist>
+                </tbody>
+            </table>
+        </div>
+        <input type="hidden" id="pages" value="{$list.pages}">
+        <elt name="list.pages" value="1"><div id="page" style="margin-top:5px; text-align:center;display: none;"></div><else/><div id="page" style="margin-top:5px; text-align:center;"></div></elt>
+    </div>
+
+    <block name="script">
+        <script type="text/javascript" src="__OTHER__/lib/laypage/1.2/laypage.js"></script>
+        <script type="text/javascript" src="__OTHER__/lib/My97DatePicker/WdatePicker.js"></script>
+        <script type="text/javascript">
+            /*管理员-增加*/
+            function add(title, url, w, h) {
+                layer_show(title, url, w, h);
+            }
+            function user_edit(title, url, id, w, h){
+                layer_show(title, url, w, h);
+            }
+            //跳转
+            $('.show_image').click(function(){
+                var content = '<div><img src='+$(this).attr('src')+' /></div>'
+                layer.open({
+                    type: 1,
+                    title: false,
+                    closeBtn: 0,
+                    area: '1000px,1000px',
+                    skin: 'layui-layer-nobg', //没有背景色
+                    shadeClose: true,
+                    content: content,
+                });
+            });
+            //搜索功能
+            $(".jump").click(function(){
+                var url = $(this).attr('url');
+                url +='?type='+$(this).attr('abc');
+                window.location.href=url;
+            });
+            // 分页
+            laypage({
+                cont: $('#page'), //容器。值支持id名、原生dom对象，jquery对象,
+                pages: $('#pages').val(), //总页数
+                skip: true, //是否开启跳页
+                groups: 3, //连续显示分页数
+                curr: function(){ //通过url获取当前页，也可以同上（pages）方式获取
+                    var page = location.search.match(/page=(\d+)/);
+                    return page ? page[1] : 1;
+                }(),
+                jump: function(e, first){ //触发分页后的回调
+                    if(!first){ //一定要加此判断，否则初始时会无限刷新
+                        var url = window.location.href;
+                        var query = 'page='+e.curr;
+                        if(url.indexOf('?')>0 ){
+                            if(window.location.search.match(/page=(\d+)/)){
+                                url = url.replace(/page=(\d+)/,query);
+                            }else{
+                                url += '&' + query;
+                            }
+                        }else{
+                            url += '?' + query;
+                        }
+                        window.location.href = url;
+                    }
+                }
+            });
+        </script>
+    </block>
+</block>

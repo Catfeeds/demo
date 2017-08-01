@@ -1,0 +1,68 @@
+<extend name="Public/base"/>
+
+<block name="body">
+
+    <div class="cl pd-20" style=" background-color:#5bacb6">
+	  	<dl style="margin-left:30px; color:#fff">
+	    	<dt><span class="f-18">真实姓名：{$detail.realname}</span></dt>
+	  	</dl>
+	</div>
+	<div class="pd-20">
+	  	<table class="table">
+	    	<tbody>
+	    		<tr>
+	        		<th class="text-r" width="120">身份证号：</th>
+        			<td>{$detail.idcard}</td>
+	      		</tr>
+	      		<tr>
+	        		<th class="text-r" width="80">服务类型：</th>
+        			<td>
+        				<if condition="$detail.guide_type eq '1'">导游
+        					<tr>
+				        		<th class="text-r" width="80">导游证：</th>
+			        			<td>{$detail.guide_card_number}</td>
+				      		</tr>
+							<elseif condition="$detail.guide_type eq '2'"/>随游
+		    					<else />向导
+		    			</if>
+        			</td>
+	      		</tr>
+	      		<tr>
+	        		<th class="text-r" width="120">导游证图片：</th>
+        			<td><img class="avatar show_image size-XL l" src="{$detail.guide_card}"></td>
+	      		</tr>
+	    		<tr>
+	        		<th class="text-r" width="120">持身份证图片：</th>
+        			<td><img class="avatar show_image size-XL l" src="{$detail.guide_idcard}"></td>
+	      		</tr>
+	      		<tr>
+	        		<th class="text-r" width="120">身份证正面：</th>
+        			<td><img class="avatar show_image size-XL l" src="{$detail.idcard_front}"></td>
+	      		</tr>
+	      		<tr>
+	        		<th class="text-r" width="120">身份证背面：</th>
+        			<td><img class="avatar show_image size-XL l" src="{$detail.idcard_back}"></td>
+	      		</tr>
+	      		<tr>
+	        		<th class="text-r" width="120">操作：</th>
+        			<td><a href="{:U('realname_confirm',array('uid'=>$detail['uid'],'type'=>1,'guide_type'=>$detail['guide_type']))}">通过</a>&nbsp;&nbsp;<a href="{:U('realname_confirm?uid='.$detail['uid'].'&type=-1')}">不通过</a></td>
+	      		</tr>
+	    	</tbody>
+	  	</table>
+	</div>
+	<script type="text/javascript">
+		//页面层-佟丽娅
+		$('.show_image').click(function(){
+			var content = '<div><img src='+$(this).attr('src')+' /></div>'
+			layer.open({
+				type: 1,
+				title: false,
+				closeBtn: 0,
+				area: '1000px,1000px',
+				skin: 'layui-layer-nobg', //没有背景色
+				shadeClose: true,
+				content: content,
+			});
+		});
+	</script>
+</block>

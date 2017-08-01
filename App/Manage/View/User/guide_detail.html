@@ -1,0 +1,215 @@
+
+<extend name="Public/base"/>
+<block name="body">
+	<div class="pd-20">
+		<table class="table table-border table-hover table-bg table-striped;">
+			<tr>
+				<td colspan="4" style="width: 100%;height: 35px;background-color: #555555;font-size: 14px;color: #FFFFFF">
+					<if condition="$detail.is_auth eq '1'">
+						<div style="height: 30px;width: 50%;float: left;margin-top: 10px;margin-left: 20px">
+							通过审核时间：<span style="color: red">{$time_confirm['action_time']}
+                </span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						</div>
+						<else/>
+					</if>
+					<div style="height: 30px;width: 5%;float: right;margin-top: 10px;color: #E9E9E9">
+						<if condition="$detail.is_auth eq '0'">待审核
+							<elseif condition="$detail.is_auth eq '1'"/>已通过
+							<elseif condition="$detail.is_auth eq '-1'"/>未通过
+						</if>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="4" style="width: 100%;height: 10px;background-color: #FFFFFF;"></td>
+			</tr>
+			<tr>
+				<td colspan="4" style="width: 100%;height: 25px;background-color: #F2F2F2;font-size: 14px;font-weight: bold;">人员信息</td>
+			</tr>
+			<tr>
+				<td style="width: 10%;height: 25px;"><span style="float: right;color: #9F9C99">用户账号：</span></td>
+				<td style="width: 40%;height: 25px;">{$detail.mobile}</td>
+				<td style="width: 10%;height: 25px;"><span style="float: right;color: #9F9C99">注册时间：</span></td>
+				<td style="width: 40%;height: 25px;">{$detail.reg_time}</td>
+			</tr>
+			<tr>
+				<td style="width: 10%;height: 25px;"><span style="float: right;color: #9F9C99">注册IP：</span></td>
+				<td style="width: 40%;height: 25px;">{$detail.reg_ip}</td>
+				<td style="width: 10%;height: 25px;"><span style="float: right;color: #9F9C99">最后登录时间：</span></td>
+				<td style="width: 40%;height: 25px;">{$detail.last_login_time}</td>
+			</tr>
+			<tr>
+				<td style="width: 10%;height: 25px;"><span style="float: right;color: #9F9C99">真实姓名：</span></td>
+				<td style="width: 40%;height: 25px;">{$detail.realname}</td>
+				<td style="width: 10%;height: 25px;"><span style="float: right;color: #9F9C99">身份证号：</span></td>
+				<td style="width: 40%;height: 25px;">{$detail.idcard}</td>
+			</tr>
+			<tr>
+				<td style="width: 10%;height: 25px;"><span style="float: right;color: #9F9C99">服务类型：</span></td>
+				<td style="width: 40%;height: 25px;">
+					<if condition="$detail.guide_type eq '1'">讲解员
+						<elseif condition="$detail.guide_type eq '2'"/>领路人
+						<else />-
+					</if>
+				</td>
+				<td style="width: 10%;height: 25px;"><span style="float: right;color: #9F9C99">性别：</span></td>
+				<td style="width: 40%;height: 25px;">
+					<if condition="$detail.sex eq '0'">男
+						<elseif condition="$detail.sex eq '1'"/>女
+						<else />未设置
+					</if>
+				</td>
+			</tr>
+			<tr>
+				<td style="width: 10%;height: 25px;"><span style="float: right;color: #9F9C99">服务景区：</span></td>
+				<td style="width: 40%;height: 25px;">{$model.tourist_name}</td>
+				<td style="width: 10%;height: 25px;"><span style="float: right;color: #9F9C99">邮箱：</span></td>
+				<td style="width: 40%;height: 25px;">{$detail.email}</td>
+			</tr>
+			<if condition="$bank eq '1'">
+				<tr>
+					<td colspan="4" style="width: 100%;height: 10px;background-color: #FFFFFF;"></td>
+				</tr>
+				<tr>
+					<td colspan="4" style="width: 100%;height: 25px;background-color: #F2F2F2;font-size: 14px;font-weight: bold;">绑定银行卡信息</td>
+				</tr>
+				<volist name="list" id="vo">
+					<tr>
+						<td style="width: 10%;height: 25px;"><span style="float: right;color: #9F9C99">银行名称：</span></td>
+						<td style="width: 40%;height: 25px;">{$vo.bank_name}</td>
+						<td style="width: 10%;height: 25px;"><span style="float: right;color: #9F9C99">银行卡号：</span></td>
+						<td style="width: 40%;height: 25px;">{$vo.bankcard_number}</td>
+					</tr>
+				</volist>
+				<else />
+			</if>
+			<tr>
+				<td colspan="4" style="width: 100%;height: 10px;background-color: #FFFFFF;"></td>
+			</tr>
+			<tr>
+				<td colspan="2" style="width: 50%;height: 25px;font-weight: bold;text-align: center">头像</span></td>
+				<td colspan="2" style="width: 50%;height: 25px;font-weight: bold;text-align: center">手持身份证</td>
+			</tr>
+			<tr>
+				<td colspan="2" style="width: 50%;height: 100px;text-align: center">
+					<img class="show_image" src="{$detail.head_image}" style="width: 150px;height: 100px;"/>
+				</span></td>
+				<td colspan="2" style="width: 50%;height: 100px;text-align: center">
+					<img class="show_image" src="{$detail.guide_idcard}" style="width: 150px;height: 100px;"/>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2" style="width: 50%;height: 25px;font-weight: bold;text-align: center">身份证背面</span></td>
+				<td colspan="2" style="width: 50%;height: 25px;font-weight: bold;text-align: center">身份证正面</td>
+			</tr>
+			<tr>
+				<td colspan="2" style="width: 50%;height: 100px;text-align: center">
+					<img class="show_image" src="{$detail.idcard_back}" style="width: 150px;height: 100px;"/>
+				</span></td>
+				<td colspan="2" style="width: 50%;height: 100px;text-align: center">
+					<img class="show_image" src="{$detail.idcard_front}" style="width: 150px;height: 100px;"/>
+				</td>
+			</tr>
+		</table>
+		<table class="table table-border table-hover table-bg table-striped;" style="margin-top: 20px">
+			<if condition="$false eq '1'">
+				<tr>
+					<td colspan="6" style="width: 100%;height: 25px;background-color: #F2F2F2;font-size: 14px;font-weight: bold;">审核失败原因</td>
+				</tr>
+				<volist name="result" id="vo">
+					<tr>
+						<td style="width: 10%;height: 25px;"><span style="float: right;color: #9F9C99">操作时间：</span></td>
+						<td style="width: 25%;height: 25px;">{$vo.action_time}</td>
+						<td style="width: 10%;height: 25px;"><span style="float: right;color: #9F9C99">拒绝理由：</span></td>
+						<td style="width: 25%;height: 25px;">{$vo.action_msg}</td>
+						<td style="width: 10%;height: 25px;"><span style="float: right;color: #9F9C99">操作员：</span></td>
+						<td style="width: 20%;height: 25px;">{$vo.nickname}</td>
+					</tr>
+				</volist>
+				<else />
+			</if>
+			<if condition="$true eq '1'">
+				<tr>
+					<td colspan="6" style="width: 100%;height: 10px;background-color: #FFFFFF;"></td>
+				</tr>
+				<tr>
+					<td colspan="6" style="width: 100%;height: 25px;background-color: #F2F2F2;font-size: 14px;font-weight: bold;">禁止/启动接单原因</td>
+				</tr>
+				<volist name="res" id="vo">
+					<tr>
+						<td style="width: 10%;height: 25px;"><span style="float: right;color: #9F9C99">操作时间：</span></td>
+						<td style="width: 25%;height: 25px;">{$vo.action_time}</td>
+						<td style="width: 10%;height: 25px;"><span style="float: right;color: #9F9C99">启动/禁止理由：</span></td>
+						<td style="width: 25%;height: 25px;">{$vo.action_msg}</td>
+						<td style="width: 10%;height: 25px;"><span style="float: right;color: #9F9C99">操作员：</span></td>
+						<td style="width: 20%;height: 25px;">{$vo.nickname}</td>
+					</tr>
+				</volist>
+				<else />
+			</if>
+				<if condition="$detail.is_auth eq '0'">
+					<tr>
+						<td colspan="6" style="width: 100%;height: 10px;background-color: #FFFFFF;"></td>
+					</tr>
+					<tr>
+					<td colspan="6" style="width: 100px;height: 40px">
+						<div style="height: 100%;width: 500px;margin: 0 auto">
+							<a  style="text-decoration:none;width: 200px;height: 35px;font-size: 18px" class="confirm ml-5 btn btn-danger radius" href="javascript:;" url = "{:U(\'realname_confirm\',array(\'uid\'=>$detail[\'uid\'],\'type\'=>1,\'guide_type\'=>$detail[\'guide_type\']))}">通 过</a>
+							<a href="javascript:;" onclick="add('不通过原因', '{:U(\'realname_confirm\',array(\'uid\'=>$detail[\'uid\'],\'type\'=>-1,\'guide_type\'=>$detail[\'guide_type\']))}','1500')" class="ml-5 btn btn-danger radius" style="text-decoration:none;width: 200px;height: 35px;font-size: 18px">不通过</a>
+						</div>
+					</td>
+					</tr>
+				</if>
+		</table>
+	</div>
+	<script type="text/javascript">
+		//页面层-佟丽娅
+		$('.show_image').click(function(){
+			var content = '<div><img src='+$(this).attr('src')+' /></div>'
+			layer.open({
+				type: 1,
+				title: false,
+				closeBtn: 0,
+				area: '1000px,1000px',
+				skin: 'layui-layer-nobg', //没有背景色
+				shadeClose: true,
+				content: content,
+			});
+		});
+		$('.confirm').click(function(){
+			var url = $(this).attr('url');
+			layer.confirm('请确认通过么',function(index){
+				/*window.location.href = url;*/
+				$.get(url,function(data){
+					layer.msg(data.info, {
+						time: 1000, //不自动关闭
+						icon: data.status == '1' ? 1 : 0,
+						end: function () {
+							window.location.reload();//刷新父窗体
+						},
+					});
+				});
+			});
+
+		});
+
+		$(document).ready(function(){
+			//关闭
+			$('.close_order').click(function(){
+				var url = $(this).attr('url');
+				layer.confirm('确定要关闭么',function(index){
+					/*window.location.href = url;*/
+					$.get(url,function(data){
+						layer.msg(data.info, {
+							time: 1000, //不自动关闭
+							icon: data.status == '1' ? 1 : 0,
+							end: function () {
+								window.location.reload();//刷新父窗体
+							},
+						});
+					});
+				});
+			});
+		});
+	</script>
+</block>

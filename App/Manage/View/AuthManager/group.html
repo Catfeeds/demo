@@ -1,0 +1,70 @@
+<extend name='Public/base'/>
+<block name='body'>
+    <!--<link href="__OTHER__/lib/icheck/icheck.css" rel="stylesheet" type="text/css" id="skin" />
+    <link href="__OTHER__/lib/icheck/jquery.icheck.min.js" rel="stylesheet" type="text/css" />-->
+    <div class="pd-20">
+        <form action="{:U('addToGroup')}" method="post" class="form form-horizontal" id="form-add">
+            <label class="form-label col-3">{$nickname}所属的用户组列表：</label>
+            <volist name="auth_groups" id="vo">
+                <div class="check-box">
+                    <input class="auth_groups" type="checkbox"  id="checkbox-{$key}" name="group_id[]" value="{$vo.id}">
+                    <label for="checkbox-{$key}">{$vo.title}</label>
+                </div>
+            </volist>
+            <input type="hidden" name="uid" value="{:I('uid')}">
+            <input type="hidden" name="batch" value="true">
+            <div class="row cl">
+                <div class="col-9 col-offset-3">
+                    <input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+                </div>
+            </div>
+        </form>
+    </div>
+    <block name='script'>
+        <script type="text/javascript">
+            $(function () {
+                $("#form-add").Validform({
+                    tiptype: 2,
+                    ajaxPost: true, //ajax提交
+                    postonce: true, //提交一次
+                    callback: function (data) {
+                        if (data.status == 1) {
+                            console.log(data.info);
+                            parent.layer.alert(data.info, {
+                                time: 0, //不自动关闭
+                                icon: 1,
+                                btn: ['确定', '继续添加'],
+                                yes: function (index) {
+                                    parent.layer.close(index);
+                                    window.parent.location.reload();//刷新父窗体
+                                    parent.layer.close(parent.layer.getFrameIndex(window.name));//关闭当前窗体
+                                },
+                                cancel: function (index) {
+                                    parent.layer.close(index);
+                                    window.location.reload();
+                                },
+                            });
+                        }else if(data.status == 0){
+                            parent.layer.alert(data.info, {
+                                time: 0, //不自动关闭
+                                icon: 2,
+                                btn: ['确定'],
+                                yes: function (index) {
+                                    parent.layer.close(index);
+                                },
+                            });
+                        }
+                    }
+                });
+
+                /*默认分组设置*/
+                var group = [{$user_groups}];
+                $('.auth_groups').each(function(){
+                    if( $.inArray( parseInt(this.value,10),group )>-1 ){
+                        $(this).prop('checked',true);
+                    }
+                });
+            });
+        </script>
+    </block>
+</block>

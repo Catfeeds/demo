@@ -1,0 +1,131 @@
+<extend name='Public/base'/>
+<block name='body'>
+    <div class="pd-20">
+        <form action="" method="post" enctype="multipart/form-data" class="form form-horizontal" id="form-add"  onsubmit="return false" >
+            <div class="row cl">
+                <label class="form-label col-3"><span class="c-red">*</span>版本编码：</label>
+                <div class="formControls col-5">
+                    <input type="text" class="input-text radius" name="version_code" value="{$info.version_code}" id="tourist_name" placeholder="如：1；" datatype = 'n1-20' nullmsg="版本编码不能为空！">
+                </div>
+                <div class="col-4"> </div>
+            </div>
+            <div class="row cl">
+                <label class="form-label col-3"><span class="c-red">*</span>版本名称：</label>
+                <div class="formControls col-5">
+                    <input type="text" class="input-text radius" placeholder="如：1.0.0；" name="version_title" value="{$info.version_title}" datatype = '*1-10' nullmsg="版本名称不能为空！">
+                </div>
+                <div class="col-4"> </div>
+            </div>
+            <div class="row cl">
+                <label class="form-label col-3"><span class="c-red">*</span>更新内容：</label>
+                <div class="formControls col-5">
+                    <textarea name="update_content" cols="" rows="" class="textarea radius" placeholder="版本更新内容……" datatype = '*1-250' nullmsg="版本更新内容不能为空！">{$info.update_content|default=''}</textarea>
+                </div>
+                <div class="col-4"> </div>
+            </div>
+            <div class="row cl">
+                <label class="form-label col-3"><span class="c-red">*</span>客户端类型：</label>
+                <div class="formControls col-5">
+                    <select class="input-text radius" size='1' <notempty name="id">disabled="disabled"</notempty> name="guide_type" id="lng_lat" datatype = 'n' nullmsg="客户端类型不能为空！">
+                        <option value="" selected>--请选择--</option>
+                        <option value="1" <eq name="info.client" value="1">selected</eq>>用户端</option>
+                        <option value="2" <eq name="info.client" value="2">selected</eq>>导游端</option>
+                    </select>
+                    <notempty name="id"><input type="hidden" name="guide_type" value="{$info.client}"></notempty>
+                </div>
+                <div class="col-3"> </div>
+            </div>
+            <div class="row cl">
+                <label class="form-label col-3"><span class="c-red">*</span>是否开启：</label>
+                <div class="formControls col-5">
+                    <select class="input-text radius" size='1' name="status" id="lng_lat" datatype = 'n' nullmsg="客户端类型不能为空！">
+                    <option value="1" <eq name="info.status" value="1">selected</eq>>开启</option>
+                    <option value="0" <eq name="info.status" value="0">selected</eq>>关闭</option>
+                    </select>
+                    <notempty name="id"><input type="hidden" name="guide_type" value="{$info.client}"></notempty>
+                </div>
+                <div class="col-3"> </div>
+            </div>
+            <div class="row cl" <eq name="platform" value="ios"> style="display: none"</eq>>
+                <label class="form-label col-3"><span class="c-red">*</span>版本资料：</label>
+                <div class="formControls col-5">
+                    <!--<input type="file" id="file" name="file">
+                    <input type="hidden" id="flag" name="flag" value="ajax文件上传"/>-->
+                <span class="btn-upload form-group">
+                    <input class="input-text upload-url radius" type="text" id="flag" name="flag" readonly value="{$info.version_url}">
+                    <a href="javascript:void(0);" class="btn btn-primary radius"><i class="iconfont">&#xf0020;</i> 浏览文件</a>
+                    <input type="file" multiple name="apk" id= "apk" accept=".apk" class="input-file" >
+                </span>
+                </div>
+            </div>
+            <div class="row cl">
+                <div class="col-9 col-offset-3">
+                    <input type="hidden" name="id" value="{$id}">
+                    <input type="hidden" name="platform" value="{$platform}">
+                    <input class="btn btn-primary radius" type="submit" id='submit' value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+                </div>
+            </div>
+        </form>
+    </div>
+    <block name='script'>
+        <script type="text/javascript" src="__OTHER__/lib/ajaxFileUpload/ajaxfileupload.js"></script>
+        <script type="text/javascript">
+            (function($){
+                $.fn.serializeJson=function(){
+                    var serializeObj={};
+                    var array=this.serializeArray();
+                    var str=this.serialize();
+                    $(array).each(function(){
+                        if(serializeObj[this.name]){
+                            if($.isArray(serializeObj[this.name])){
+                                serializeObj[this.name].push(this.value);
+                            }else{
+                                serializeObj[this.name]=[serializeObj[this.name],this.value];
+                            }
+                        }else{
+                            serializeObj[this.name]=this.value;
+                        }
+                    });
+                    return serializeObj;
+                };
+            })(jQuery);
+
+            $('#submit').click(function () {
+                $.ajaxFileUpload({
+                    url: '',
+                    type: 'post',
+                    secureuri: false, //一般设置为false
+                    fileElementId: 'apk', // 上传文件的id、name属性名
+                    elementIds: flag, //传递参数到服务器
+                    //dataType: 'xml', //返回值类型，一般设置为json、application/json
+                    data : $('#form-add').serializeJson(),
+                    success: function(data, status){
+                        data = $(data).find("body").text();//获取返回的字符串
+                        data = $.parseJSON(data);//把字符串转化为json对象
+                        if (data.status == 1) {
+                            parent.layer.alert(data.info, {
+                                time: 0, //不自动关闭
+                                icon: 1,
+                                btn: ['确定'],
+                                yes: function (index) {
+                                    parent.layer.close(index);
+                                    window.parent.location.reload();//刷新父窗体
+                                    parent.layer.close(parent.layer.getFrameIndex(window.name));//关闭当前窗体
+                                },
+                            });
+                        }else if(data.status == 0){
+                            parent.layer.alert(data.info, {
+                                time: 0, //不自动关闭
+                                icon: 2,
+                                btn: ['确定'],
+                                yes: function (index) {
+                                    parent.layer.close(index);
+                                },
+                            });
+                        }
+                    },
+                });
+            })
+        </script>
+    </block>
+</block>

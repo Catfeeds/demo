@@ -1,0 +1,178 @@
+<extend name="Public/base"/>
+
+<block name="body">
+    <div class="pd-20">
+        <div class="text-c" id="search">日期范围：
+            <input type="text" onfocus="selecttime(1)"  id="start_time" name='start_time' value="{$list.get.start_time}" class="input-text Wdate search" style="width:120px;">
+            -
+            <input type="text" onfocus="selecttime(2)" id="end_time" name ='end_time' value="{$list.get.end_time}" class="input-text Wdate search" style="width:120px;">
+            <input type="text" name="key" id="key" value="{$list.get.key}" placeholder="-订单号-" style="width:250px" class="input-text search">
+            <input type="hidden" class="search" name="tourist_id" value="{$list.get.tourist_id}">
+            <div class="col-1"></div>
+            <button name="search" class="btn btn-success" url="{:U('')}" type="button"><i class="Hui-iconfont">&#xe665;</i> 搜索</button>
+        </div>
+        <div class="cl pd-5 bg-1 bk-gray mt-20">
+            <span class="r">共有数据：<strong>{:count($list['list'])}</strong> 条</span>
+        </div>
+        <div class="mt-20">
+            <table class="table table-border table-bordered table-hover table-bg table-striped">
+                <thead>
+                <tr class="text-c">
+                    <!--	<th width="25"><input type="checkbox" name="" value=""></th>-->
+                    <th width="60">订单号</th>
+                    <th width="40">提交时间</th>
+                    <th width="20">初始价格</th>
+                    <th width="60">减免后价格</th>
+                    <th width="120">减免原因</th>
+                    <th width="40">提交人</th>
+                    <th width="70">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <volist name="list.list" id="vo">
+                    <tr class="text-c">
+                        <!--<td><input type="checkbox" value="{$vo.uid}" name="checked"></td>-->
+                        <td width="60">{$vo.link_id}</td>
+                        <td width="60">{$vo.action_time}</td>
+                        <td width="60">{$vo.pay_money}</td>
+                        <td width="60">{$vo.condition}</td>
+                        <td width="120">{$vo.action_msg}</td>
+                        <td width="60">{$vo.nickname}</td>
+                        <td width="70px">
+                            <a href="javascript:;" condition = "{:$vo['condition']}" url="{:U('audit_status',array('link_id'=>$vo['link_id'],'check_result'=>1,'pay_money'=>$vo['pay_money'],'id'=>$vo['id']))}"  class="ajax-post ml-5 btn btn-danger radius" style="text-decoration:none">通过</a>
+                            <a href="javascript:;"  onclick="add('原因','{:U(\'audit_not\',array(\'link_id\'=>$vo[\'link_id\'],\'check_result\'=>-1,\'pay_money\'=>$vo[\'pay_money\'],\'id\'=>$vo[\'id\'],\'condition\'=>$vo[\'condition\']))}')" class="ml-5 btn btn-danger radius" style="text-decoration:none">不通过</a>
+                        </td>
+                    </tr>
+                </volist>
+                </tbody>
+            </table>
+        </div>
+        <input type="hidden" id="pages" value="{$list.pages}">
+        <elt name="list.pages" value="1"><div id="page" style="margin-top:5px; text-align:center;display: none;"></div><else/><div id="page" style="margin-top:5px; text-align:center;"></div></elt>
+    </div>
+
+    <block name="script">
+        <script type="text/javascript" src="__OTHER__/lib/laypage/1.2/laypage.js"></script>
+        <script type="text/javascript" src="__OTHER__/lib/My97DatePicker/WdatePicker.js"></script>
+        <script type="text/javascript">
+            /*管理员-增加*/
+            // 分页
+            laypage({
+                cont: $('#page'), //容器。值支持id名、原生dom对象，jquery对象,
+                pages: $('#pages').val(), //总页数
+                skip: true, //是否开启跳页
+                groups: 3, //连续显示分页数
+                curr: function(){ //通过url获取当前页，也可以同上（pages）方式获取
+                    var page = location.search.match(/page=(\d+)/);
+                    return page ? page[1] : 1;
+                }(),
+                jump: function(e, first){ //触发分页后的回调
+                    if(!first){ //一定要加此判断，否则初始时会无限刷新
+                        var url = window.location.href;
+                        var query = 'page='+e.curr;
+                        if(url.indexOf('?')>0 ){
+                            if(window.location.search.match(/page=(\d+)/)){
+                                url = url.replace(/page=(\d+)/,query);
+                            }else{
+                                url += '&' + query;
+                            }
+                        }else{
+                            url += '?' + query;
+                        }
+                        window.location.href = url;
+                    }
+                }
+            });
+            //get提交
+            $('.ajax-post').click(function () {
+                var url = $(this).attr('url');
+                var condition = $(this).attr('condition');
+                $.post(url,{condition:condition},function (data) {
+                    layer.msg(data.info, {
+                        time: 1000, //不自动关闭
+                        icon: data.status == '1' ? 1 : 0,
+                        end: function () {
+                            window.location.reload();//刷新父窗体
+                        }
+                    });
+                })
+            });
+
+            //搜索功能
+            $("button[name='search']").click(function(){
+                var url = $(this).attr('url');
+                var query  = $('body').find('.search').serialize();
+                query = query.replace(/(&|^)(\w*?\d*?\-*?_*?)*?=?((?=&)|(?=$))/g,'');
+                query = query.replace(/^&/g,'');
+                if( url.indexOf('?')>0 ) url +='&' + query;
+                else url += '?' + query;
+                window.location.href = url;
+            });
+            //回车搜索
+            $("#search").keyup(function(e){
+                if(e.keyCode === 13){
+                    $("button[name='search']").click();
+                    return false;
+                }
+            });
+
+            //时间选择
+            function selecttime(flag) {
+                switch (flag) {
+                    case 1:
+                        var end_date = $("#end_time").val();
+                        if (end_date != "") {
+                            var now_date = new Date();
+                            var y = now_date.getFullYear();
+                            var m = now_date.getMonth() + 2;
+                            var d = now_date.getDate();
+                            var now_time = new Date(y + '/' + m + '/' + d);
+                            if (new Date(end_date.replace("-", "/").replace("-", "/")) <= now_time) {
+                                WdatePicker({dateFmt: 'yyyy-MM-dd', minDate: '', maxDate: end_date});
+                            } else {
+                                WdatePicker({dateFmt: 'yyyy-MM-dd', minDate: '', maxDate: '%y-%M-%d'});
+                            }
+                        } else {
+                            WdatePicker({dateFmt: 'yyyy-MM-dd', minDate: '', maxDate: '%y-%M-%d'});
+                        }
+                        break;
+                    case 2:
+                        var startTime = $("#start_time").val();
+                        if (startTime != "") {
+                            WdatePicker({dateFmt: 'yyyy-MM-dd', minDate: startTime, maxDate: '%y-{%M}-%d'});
+                        } else {
+                            WdatePicker({dateFmt: 'yyyy-MM-dd', minDate: '', maxDate: '%y-%M-%d'});
+                        }
+                        break;
+                }
+            }
+            function del(url) {
+                var tmp = new Array();
+                $("input[name='checked']").each(function () {
+                    if ($(this).is(':checked'))
+                        tmp.push($(this).val());
+                })
+                if (tmp.length <= 0) {
+                    alert('你还没有选择任何内容！');
+                    return false;
+                }
+                layer.confirm('确认要删除吗？', function (index) {
+                    //此处请求后台程序，下方是成功后的前台处理……
+                    //ajaxPost提交
+                    $.post(url, {'id': tmp}, function (data) {
+                        parent.layer.alert(data.info, {
+                            time: 3000, //不自动关闭
+                            icon: data.status == '1' ? 1 : 0,
+                            btn: ['确定', ],
+                            end: function () {
+                                window.location.reload();//刷新父窗体
+                            },
+                        });
+                    });
+                    $(obj).parents("tr").remove();
+                    layer.msg('已删除!', {icon: 1, time: 1000});
+                });
+            }
+        </script>
+    </block>
+</block>

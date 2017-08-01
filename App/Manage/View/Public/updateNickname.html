@@ -1,0 +1,57 @@
+<extend name='Public/base'/>
+<block name='body'>
+    <div class="pd-20">
+        <form action="" method="post" class="form form-horizontal" id="form-add">
+            <div class="row cl">
+                <label class="form-label col-3"><span class="c-red">*</span>密码：</label>
+                <div class="formControls col-5">
+                    <input type="password" class="input-text radius" name="password" id="password" datatype = '*6-20' nullmsg="密码不能为空！">
+                </div>
+                <div class="col-4"> </div>
+            </div>
+            <div class="row cl">
+                <label class="form-label col-3"><span class="c-red">*</span>昵称：</label>
+                <div class="formControls col-5">
+                    <input type="text" class="input-text radius" name="nickname" id="nickname" value="{$nickname}" datatype = '*2-10' nullmsg="用户名不能为空！">
+                </div>
+                <div class="col-4"> </div>
+            </div>
+            <div class="row cl">
+                <div class="col-9 col-offset-3">
+                    <input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+                </div>
+            </div>
+        </form>
+    </div>
+    <script type="text/javascript">
+        $("#form-add").Validform({
+            tiptype: 2,
+            ajaxPost: true, //ajax提交
+            postonce: true, //提交一次
+            callback: function (data) {
+                if (data.status == 1) {
+                    console.log(data.info);
+                    parent.layer.alert(data.info, {
+                        time: 0, //不自动关闭
+                        icon: 1,
+                        btn: ['确定'],
+                        yes: function (index) {
+                            parent.layer.close(index);
+                            window.parent.location.reload();//刷新父窗体
+                            parent.layer.close(parent.layer.getFrameIndex(window.name));//关闭当前窗体
+                        },
+                    });
+                }else if(data.status == 0){
+                    parent.layer.alert(data.info, {
+                        time: 0, //不自动关闭
+                        icon: 2,
+                        btn: ['确定'],
+                        yes: function (index) {
+                            parent.layer.close(index);
+                        },
+                    });
+                }
+            }
+        });
+    </script>
+</block>

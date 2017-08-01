@@ -1,0 +1,217 @@
+
+<extend name="Public/base"/>
+<block name="body">
+    <div class="pd-20">
+        <table class="table table-border  table-hover table-bg table-striped;">
+            <tr>
+                <td colspan="6" style="width: 100%;height: 35px;background-color: #555555;font-size: 14px;color: #FFFFFF">
+                    <div style="height: 30px;width: 50%;float: left;margin-top: 10px">
+                        当前订单状态：<span style="color: red">
+                    <if condition="$detail.order_status eq '0'">待处理订单
+                        <elseif condition="$detail.order_status eq '1'"/>已接单，未开始
+                        <elseif condition="$detail.order_status eq '2'"/>服务已开始
+                        <elseif condition="$detail.order_status eq '3'"/>服务结束，待提交工单
+                        <elseif condition="$detail.order_status eq '4'"/>工单提交，待支付
+                        <elseif condition="$detail.order_status eq '5'"/>已支付，未评论
+                        <elseif condition="$detail.order_status eq '6'"/>订单已结束
+                        <elseif condition="$detail.order_status eq '7'"/>已取消，未支付
+                        <elseif condition="$detail.order_status eq '8'"/>已关闭
+                        <elseif condition="$detail.order_status eq '9'"/>导游已到达用户附近
+                        <else />- -
+                    </if>
+                </span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        服务类型：
+                        <span style="color: red">
+                             <if condition="$detail.guide_type eq '1'">讲解员
+                                 <elseif condition="$detail.guide_type eq '2'"/>领路人
+                                 <else />- -
+                             </if>
+                        </span>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        计费方式：<span style="color: red">
+                    <if condition="$detail.charging_type eq '1'">小时
+                        <elseif condition="$detail.charging_type eq '2'"/>按次
+                        <else />- -
+                    </if>
+                </span>
+                    </div>
+                    <if condition="$detail.order_status eq 7">
+                        <a style="text-decoration:none;float: right" class="close_order ml-5"  href="javascript:;" onclick="add('关闭订单','{:U(\'close_order_why\',array(\'order_number\'=>$detail[\'order_number\'],\'close_is\'=>0))}')"><span class="btn btn-danger radius">关闭订单</span></a>
+                        <elseif condition="$detail.order_status eq '4'"/>
+                        <a style="text-decoration:none;float: right" class="close_order ml-5"  href="javascript:;" onclick="add('关闭订单','{:U(\'close_order_why\',array(\'order_number\'=>$detail[\'order_number\'],\'close_is\'=>0))}')"><span class="btn btn-danger radius">关闭订单</span></a>
+                    </if>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="6" style="width: 100%;height: 10px;background-color: #FFFFFF;"></td>
+            </tr>
+            <tr>
+                <td colspan="6" style="width: 100%;height: 25px;background-color: #F2F2F2;font-size: 14px;font-weight: bold;">订单信息</td>
+            </tr>
+            <tr>
+                <td style="width: 13%;height: 25px;"><span style="float: right;color: #9F9C99">订单号：</span></td>
+                <td style="width: 20%;height: 25px;">{$detail.order_number}</td>
+                <td style="width: 13%;height: 25px;"><span style="float: right;color: #9F9C99">下单时间：</span></td>
+                <td style="width: 20%;height: 25px;">{$detail.order_time}</td>
+                <td style="width: 14%;height: 25px;"><span style="float: right;color: #9F9C99">接单时间：</span></td>
+                <td style="width: 20%;height: 25px;">{$detail.guide_confirm_order_time}</td>
+            </tr>
+            <tr>
+                <td style="width: 13%;height: 25px;"><span style="float: right;color: #9F9C99">服务类型：</span></td>
+                <td style="width: 20%;height: 25px;">
+                    <if condition="$detail.order_server_type eq '0'">即时服务
+                        <elseif condition="$detail.order_server_type eq '1'"/>预约服务
+                        <else />- -
+                    </if>
+                </td>
+                <td style="width: 13%;height: 25px;"><span style="float: right;color: #9F9C99">取消时间：</span></td>
+                <td style="width: 20%;height: 25px;">{$detail.cancel_time}</td>
+                <td style="width: 14%;height: 25px;"><span style="float: right;color: #9F9C99">服务地区：</span></td>
+                <td style="width: 20%;height: 25px;">{$result.tourist_name}</td>
+            </tr>
+            <tr>
+                <td style="width: 13%;height: 25px;"><span style="float: right;color: #9F9C99">开始服务时间：</span></td>
+                <td style="width: 20%;height: 25px;">{$detail.server_start_time}</td>
+                <td style="width: 13%;height: 25px;"><span style="float: right;color: #9F9C99">结束服务时间：</span></td>
+                <td style="width: 20%;height: 25px;">{$detail.server_end_time}</td>
+                <td style="width: 14%;height: 25px;"><span style="float: right;color: #9F9C99">服务时长：</span></td>
+                <td style="width: 20%;height: 25px;">{$server_time}</td>
+            </tr>
+            <tr>
+                <td colspan="6" style="width: 100%;height: 25px;background-color: #F2F2F2;font-size: 14px;font-weight: bold;">用户信息</td>
+            </tr>
+            <tr>
+                <td style="width: 13%;height: 25px;"><span style="float: right;color: #9F9C99">用户昵称：</span></td>
+                <td style="width: 20%;height: 25px;">{$detail.um_nickname}</td>
+                <td style="width: 13%;height: 25px;"><span style="float: right;color: #9F9C99">用户账号：</span></td>
+                <td style="width: 20%;height: 25px;">{$detail.um_phone}</td>
+                <td style="width: 14%;height: 25px;"><span style="float: right;color: #9F9C99">是否购买保险：</span></td>
+                <td style="width: 20%;height: 25px;">- -</td>
+            </tr>
+            <tr>
+                <td style="width: 13%;height: 25px;"><span style="float: right;color: #9F9C99">保险单号：</span></td>
+                <td style="width: 20%;height: 25px;">- -</td>
+                <td style="width: 13%;height: 25px;"><span style="float: right;color: #9F9C99">保险人：</span></td>
+                <td style="width: 20%;height: 25px;">- -</td>
+                <td style="width: 14%;height: 25px;"><span style="float: right;color: #9F9C99">保险人证件号：</span></td>
+                <td style="width: 20%;height: 25px;">- -</td>
+            </tr>
+            <tr>
+                <td style="width: 13%;height: 25px;"><span style="float: right;color: #9F9C99">保险人电话：</span></td>
+                <td colspan="5" style="width: 20%;height: 25px;">- -</td>
+            </tr>
+            <tr>
+                <td colspan="6" style="width: 100%;height: 25px;background-color: #F2F2F2;font-size: 14px;font-weight: bold;">服务人员信息</td>
+            </tr>
+            <tr>
+                <td style="width: 13%;height: 25px;"><span style="float: right;color: #9F9C99">用户姓名：</span></td>
+                <td style="width: 20%;height: 25px;">{$detail.realname}</td>
+                <td style="width: 13%;height: 25px;"><span style="float: right;color: #9F9C99">用户账号：</span></td>
+                <td style="width: 20%;height: 25px;">{$detail.mobile}</td>
+                <td style="width: 14%;height: 25px;"><span style="float: right;color: #9F9C99">用户类型：</span></td>
+                <td style="width: 20%;height: 25px;">
+                    <if condition="$detail.server_type eq '0'">全陪
+                        <elseif condition="$detail.server_type eq '1'"/>地陪
+                        <elseif condition="$detail.server_type eq '2'"/>领队
+                        <else />- -
+                    </if>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="6" style="width: 100%;height: 25px;background-color: #F2F2F2;font-size: 14px;font-weight: bold;">支付信息</td>
+            </tr>
+            <tr style="border-bottom: hidden">
+                <td style="width: 13%;height: 30px;"><span style="float: right;color: #9F9C99">支付方式：</span></td>
+                <td style="width: 20%;height: 30px;">
+                    <if condition="$detail.pay_channel eq '1'">支付宝
+                        <elseif condition="$detail.pay_channel eq '2'"/>微信
+                    </if>
+                </td>
+                <td style="width: 13%;height: 30px;"><span style="float: right;color: #9F9C99">支付账号：</span></td>
+                <td style="width: 20%;height: 30px;">{$detail.pay_account}</td>
+                <td style="width: 14%;height: 30px;"><span style="float: right;color: #9F9C99">支付时间：</span></td>
+                <td style="width: 20%;height: 30px;">{$detail.pay_time}</td>
+            </tr>
+            <tr>
+                <td colspan="6" style="width: 100%;height: 25px;background-color: #F2F2F2;font-size: 14px;font-weight: bold;">用户评论</td>
+            </tr>
+            <tr style="border-bottom: hidden">
+                <td style="width: 13%;height: 30px;"><span style="float: right;color: #9F9C99">导游评分：</span></td>
+                <td style="width: 20%;height: 30px;">{$detail.stars}分</td>
+                <td style="width: 13%;height: 30px;"><span style="float: right;color: #9F9C99">用户评论：</span></td>
+                <td colspan="3" style="width: 54%;height: 30px;">{$detail.pay_account}</td>
+            </tr>
+        </table>
+        <table class="table table-border table-bordered table-hover table-bg table-striped;">
+            <tr>
+                <td style="width: 16%;height: 25px;font-size: 14px;background-color: #F2F2F2;font-weight: bold;text-align: center">服务类型</td>
+                <td style="width: 16%;height: 25px;font-size: 14px;background-color: #F2F2F2;font-weight: bold;text-align: center">计费方式</td>
+                <td style="width: 16%;height: 25px;font-size: 14px;background-color: #F2F2F2;font-weight: bold;text-align: center">服务时长</td>
+                <td style="width: 16%;height: 25px;font-size: 14px;background-color: #F2F2F2;font-weight: bold;text-align: center">服务单价</td>
+                <td style="width: 16%;height: 25px;font-size: 14px;background-color: #F2F2F2;font-weight: bold;text-align: center">取消费</td>
+                <td style="width: 20%;height: 25px;font-size: 14px;background-color: #F2F2F2;font-weight: bold;text-align: center">订单状态</td>
+            </tr>
+            <tr>
+                <td style="width: 16%;height: 25px;font-size: 14px;text-align: center">
+                    <if condition="$detail.order_server_type eq '0'">即时服务
+                        <elseif condition="$detail.order_server_type eq '1'"/>预约服务
+                        <else />- -
+                    </if>
+                </td>
+                <td style="width: 16%;height: 25px;font-size: 14px;text-align: center">
+                    <if condition="$detail.charging_type eq '1'">小时
+                        <elseif condition="$detail.order_server_type eq '2'"/>按次
+                        <else />- -
+                    </if>
+                </td>
+                <td style="width: 16%;height: 25px;font-size: 14px;text-align: center">{$server_time}</td>
+                <td style="width: 16%;height: 25px;font-size: 14px;text-align: center">{$detail.server_price}</td>
+                <td style="width: 16%;height: 25px;font-size: 14px;text-align: center">{$cancel}</td>
+                <td style="width: 20%;height: 25px;font-size: 14px;text-align: center">
+                    <if condition="$detail.order_status eq '0'">待处理订单
+                        <elseif condition="$detail.order_status eq '1'"/>已接单，未开始
+                        <elseif condition="$detail.order_status eq '2'"/>服务已开始
+                        <elseif condition="$detail.order_status eq '3'"/>服务结束，待提交工单
+                        <elseif condition="$detail.order_status eq '4'"/>工单提交，待支付
+                        <elseif condition="$detail.order_status eq '5'"/>已支付，未评论
+                        <elseif condition="$detail.order_status eq '6'"/>订单已结束
+                        <elseif condition="$detail.order_status eq '7'"/>已取消，未支付
+                        <elseif condition="$detail.order_status eq '8'"/>已关闭
+                        <elseif condition="$detail.order_status eq '9'"/>导游已到达用户附近
+                        <else />- -
+                    </if>
+                </td>
+            </tr>
+        </table>
+        <table class="table table-hover table-bg table-striped;">
+            <tr style="border-bottom: hidden">
+                <td colspan="6" style="width: 100%;height: 50px;font-size: 15px;">
+                    <div style="height: 100%;width: 50%;float: right;margin-top: 5px;">
+                        <p style="float: left;width: 18%;margin-top: 15px"> 服务费：<span style="color: red">￥{$detail.order_money} </span></p>
+                        <p style="float: left;width: 18%;margin-top: 15px"> 小费：<span style="color: red">￥{$detail.tip_money} </span></p>
+                        <p style="float: left;width: 18%;margin-top: 15px"> 优惠券：<span style="color: red">￥{$detail.rebate_money} </span></p>
+                        <p style="float: left;width: 18%;margin-top: 15px"> 减免：<span style="color: red">￥{$detail.derate_money}</span></p>
+                        <p style="float: left;width: 28%;margin-top: 10px"> 实际价格：<span style="color: red;font-size: 25px">￥{$detail.pay_money}</span></p>
+                    </div>
+                </td>
+            </tr>
+            <if condition="$msg_is eq '1'">
+                <tr style="border-bottom: hidden">
+                    <td colspan="6" style="width: 100%;height: 40px;font-size: 15px;">
+                        <p>减免原因：<span style="color: red">{$msg.action_msg} </span></p>
+                    </td>>
+                </tr>
+                <else />
+            </if>
+        </table>
+    </div>
+   <!-- <script type="text/javascript">
+        $(document).ready(function(){
+            //关闭
+            $('.close_order').click(function(){
+                var url = $(this).attr('url');
+                window.location.href = url;
+            });
+        });
+    </script>-->
+</block>

@@ -1,0 +1,52 @@
+<extend name='Public/base'/>
+<block name='body'>
+    <div class="pd-20">
+        <form action="{:U(\'changeStatus_guide?method=close&check_result=-1&id=\'.$result[\'id\'])}" method="post" enctype="multipart/form-data" class="form form-horizontal" id="form-add">
+                <label class="form-label col-3"><span class="c-red">*</span>禁止原因：</label>
+                <div class="formControls col-5">
+                    <textarea name="action_msg" cols="" rows="" class="textarea radius" placeholder="修改原因……" datatype = '*1-250' nullmsg="修改原因不能为空！">{$info.update_content|default=''}</textarea>
+                </div>
+                <div class="col-4"> </div>
+            <div class="row cl">
+                <div class="col-9 col-offset-3">
+                    <input type="hidden" name="method" value="{$result['method']}">
+                    <input type="hidden" name="check_result" value="{$result['check_result']}">
+                    <input type="hidden" name="id" value="{$result['id']}">
+                    <input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+                </div>
+            </div>
+        </form>
+    </div>
+    <block name='script'>
+        <script type="text/javascript">
+            $("#form-add").Validform({
+                tiptype: 2,
+                ajaxPost: true, //ajax提交
+                postonce: true, //提交一次
+                callback: function (data) {
+                    if (data.status == 1) {
+                        parent.layer.alert(data.info, {
+                            time: 0, //不自动关闭
+                            icon: 1,
+                            btn: ['确定',],
+                            yes: function (index) {
+                                parent.layer.close(index);
+                                window.parent.location.reload();//刷新父窗体
+                                parent.layer.close(parent.layer.getFrameIndex(window.name));//关闭当前窗体
+                            },
+                        });
+                    }else if(data.status == 0){
+                        parent.layer.alert(data.info, {
+                            time: 0, //不自动关闭
+                            icon: 2,
+                            btn: ['确定'],
+                            yes: function (index) {
+                                parent.layer.close(index);
+                            },
+                        });
+                    }
+                }
+            });
+        </script>
+    </block>
+</block>

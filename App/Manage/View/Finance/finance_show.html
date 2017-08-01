@@ -1,0 +1,298 @@
+<extend name="Public/base"/>
+<block name="body">
+    <div class="pd-20">
+        <table>
+            <tr>
+                <td style="width: 10%;height: 30px"><span style="float: right;margin-right: 10px" id="time_top">支付时间：</span></td>
+                <td style="width: 12%;height: 30px">
+                    <div class="formControls col-1" style="width: 160px;">
+                    <span class="select-box" id="border_none">
+                        <select class="select search" size='1' name="time_type" id="times">
+                            <option value="2" <eq name="time_type" value="2">selected</eq>>七天</option>
+                            <option value="1" <eq name="time_type" value="1">selected</eq>>今天</option>
+                            <option value="3" <eq name="time_type" value="3">selected</eq>>一个月</option>
+                            <option value="4" <eq name="time_type" value="4">selected</eq>>三个月</option>
+                            <option value="-1" <eq name="time_type" value="-1">selected</eq>>自定义时间</option>
+                        </select>
+                    </span>
+                    </div>
+                </td>
+                <td style="width: 23%;height: 30px;">
+                    <div style="width: 100%;height: 100%;display: none" id="time_is">
+                        <span>自定义时间：</span>
+                        <input type="text" onfocus="selecttime(1)"  id="start_time" name='start_time' value="{$list.get.start_time}" class="input-text Wdate search" style="width:120px;">
+                        -
+                        <input type="text" onfocus="selecttime(2)" id="end_time" name ='end_time' value="{$list.get.end_time}" class="input-text Wdate search" style="width:120px;">
+                    </div>
+                </td>
+                <td style="width: 12%;height: 30px"><span style="float: right;margin-right: 20px">导游类型：</span></td>
+                <td style="width: 5%;height: 30px">
+                    <div class="formControls col-1" style="width: 160px;">
+                    <span class="select-box">
+                        <select class="select search" size='1' name="guide_type">
+                            <option value="" selected>&#45;&#45;请选择&#45;&#45;</option>
+                            <option value="1" <eq name="list.get.guide_type" value="1">selected</eq>>讲解员</option>
+                            <option value="2" <eq name="list.get.guide_type" value="2">selected</eq>>领路人</option>
+                        </select>
+                    </span>
+                    </div>
+                </td>
+                <td style="width: 7%;height: 30px"><span style="float: right;margin-right: 20px">景区类型：</span></td>
+                <td style="width: 10%;height: 30px">
+                    <div class="formControls col-1" style="width: 160px;">
+                    <span class="select-box">
+                        <select class="select search" size='1' name="tourist_id">
+                            <option value="0" selected>
+                                <if condition="$tourists_name eq '0'">{$tourist_name['tourist_name']}
+                                    <else />&#45;&#45;请选择&#45;&#45;
+                                </if>
+                            </option>
+                            <volist name="result" id="vo">
+                                <option  value="{$vo.id}">{$vo.tourist_name}</option>
+                            </volist>
+                            </option>
+                        </select>
+                    </span>
+                    </div>
+                </td>
+                <td style="width: 15%;height: 30px">
+                    <input type="text" name="key"  id="key" value="{$list.get.key}" placeholder="用户账号/订单号" style="width:200px;" class="input-text search">
+                </td>
+                <td style="width: 10%;height: 30px">
+                    <button name="search" class="btn btn-success" url="{:U('')}" type="button"><i class="Hui-iconfont">&#xe665;</i> 搜索</button>
+                  <!--  <input type="hidden" id="start_times" class="search" name="start_time">
+                    <input type="hidden" id="end_times" class="search" name="end_time">-->
+                    <input type="hidden" id="times_type"  value="{$time_type}">
+                </td>
+            </tr>
+        </table>
+        <div class="cl pd-5 bg-1 bk-gray mt-20">
+            <span class="l">
+                <!--<a href="javascript:;" onclick="del('{:U(\'del_coupon\')}')" class="btn btn-danger radius"><i class="Hui-iconfont">&#xe6e2;</i> 批量删除</a>-->
+                <button name="export" style="float: right;width: 120px;color: #000000" url="{:U('export_excel')}" class="btn btn-link">下载Excel文件</button>
+            </span>
+            <span class="r">共有数据：<strong>{:count($list['list'])}</strong> 条</span>
+        </div>
+        <div class="mt-20">
+            <table class="table table-border table-bordered table-hover table-bg table-striped">
+                <thead>
+                <tr class="text-c">
+                    <!--<th width="15"><input type="checkbox" name="" value=""></th>-->
+                    <th width="8%">订单号 | 请求交易号</th>
+                    <th width="50">用户账号</th>
+                    <th width="30">服务类型</th>
+                    <th width="50">导游姓名</th>
+                    <th width="30">风景区</th>
+                    <th width="20">支付渠道</th>
+                    <th width="30">支付时间</th>
+                    <th width="35">总收入</th>
+                    <th width="25">小费</th>
+                    <th width="25">减免</th>
+                    <th width="25">计价收入</th>
+                    <th width="25">个人收入</th>
+                    <th width="25">平台比例</th>
+                    <th width="25">平台收入</th>
+                    <th width="25">优惠卷</th>
+                    <th width="25">返利</th>
+                    <th width="25">账户余额</th>
+                </tr>
+                </thead>
+                <tbody>
+                <volist name="list.list" id="vo">
+                    <tr class="text-c">
+                        <!--<td><input type="checkbox" value="{$vo.uid}" name="checked"></td>-->
+                        <td width="8%">
+                            <a title="订单详情" href="javascript:;" onclick="show('订单详情', '{:U('User/order_detail',array('order_number'=>$vo['order_number']))}')" class="ml-5" style="text-decoration:none"><span style="color: #000000">{$vo.order_number}&nbsp;|&nbsp;{$vo.request_pay_no}</span></a>
+                        </td>
+                        <td>
+                            {$vo.phone}<!--<a title="个人订单列表" href="javascript:;" onclick="add('用户信息', '{:U('finance_once',array('uid'=>$vo['guid']))}')" class="ml-5" style="text-decoration:none; color: red"></a>-->
+                        </td>
+                        <td>
+                            <if condition="$vo.guide_type eq '1'">讲解员
+                                <elseif condition="$vo.guide_type eq '2'"/>领路人
+                                <else />导游
+                            </if>
+                        </td>
+                        <td>{$vo.realname}({$vo.mobile})</td>
+                        <td>{$vo.tourist_names}</td>
+                        <td>
+                            <if condition="$vo.pay_channel eq '1'">支付宝
+                                <elseif condition="$vo.pay_channel eq '2'"/>微信
+                            </if>
+                        </td>
+                        <td>{$vo.pay_time}</td>
+                      <!--  <td>{$vo.request_pay_no}</td>
+                        <td>{$vo.response_pay_no}</td>-->
+                        <td>{$vo.pay_money}</td>
+                        <td>{$vo.tip_money}</td>
+                        <td>{$vo.derate_money}</td>
+                        <td>{$vo.order_money}</td>
+                        <td>{$vo.one_money}</td>
+                        <td>{$vo.proportion}</td>
+                        <td>{$vo.manage_amount}</td>
+                        <td>{$vo.rebate_money}</td>
+                        <td>{$vo.rebate}</td>
+                        <td>{$vo.total_money}</td>
+                       <!-- <td>
+                            <a title="订单详情" href="javascript:;" onclick="show('订单详情', '{:U('User/order_detail',array('order_number'=>$vo['order_number']))}')" class="ml-5" style="text-decoration:none"><span style="color: #000000">详情</span></a>
+                        </td>-->
+                    </tr>
+                </volist>
+                </tbody>
+            </table>
+        </div>
+        <input type="hidden" id="pages" value="{$list.pages}">
+        <elt name="list.pages" value="1"><div id="page" style="margin-top:5px; text-align:center;display: none;"></div><else/><div id="page" style="margin-top:5px; text-align:center;"></div></elt>
+        <input type="hidden" id="differences" value="{$time_differences}">
+    </div>
+
+    <block name="script">
+        <script type="text/javascript" src="__OTHER__/lib/laypage/1.2/laypage.js"></script>
+        <script type="text/javascript" src="__OTHER__/lib/My97DatePicker/WdatePicker.js"></script>
+        <script type="text/javascript">
+            /*管理员-增加*/
+            function add(title, url, w, h) {
+                layer_show(title, url, w, h);
+            }
+            function user_edit(title, url, id, w, h){
+                layer_show(title, url, w, h);
+            }
+            $(document).ready(function(){
+                var times_type = $('#times_type').val();
+                if(times_type == -1){
+                    /*$('#times').css('display','none');
+                     $('#border_none').css('display','none');
+                     $('#time_top').css('display','none');*/
+                    $('#time_is').css('display','block');
+                }
+            });
+            $('#times').change(function () {
+                if($(this).val() == -1){
+                    $('#start_time').val('');
+                    $('#end_time').val('');
+                    /*$(this).css('display','none');*/
+                    /*$('#border_none').css('display','none');
+                     $('#time_top').css('display','none');*/
+                    $('#time_is').css('display','block');
+                }else{
+                    $(this).css('display','block');
+                    $('#border_none').css('display','block');
+                    $('#time_top').css('display','block');
+                    $('#time_is').css('display','none');
+                }
+            });
+            // 分页
+            laypage({
+                cont: $('#page'), //容器。值支持id名、原生dom对象，jquery对象,
+                pages: $('#pages').val(), //总页数
+                skip: true, //是否开启跳页
+                groups: 3, //连续显示分页数
+                curr: function(){ //通过url获取当前页，也可以同上（pages）方式获取
+                    var page = location.search.match(/page=(\d+)/);
+                    return page ? page[1] : 1;
+                }(),
+                jump: function(e, first){ //触发分页后的回调
+                    if(!first){ //一定要加此判断，否则初始时会无限刷新
+                        var url = window.location.href;
+                        var query = 'page='+e.curr;
+                        if(url.indexOf('?')>0 ){
+                            if(window.location.search.match(/page=(\d+)/)){
+                                url = url.replace(/page=(\d+)/,query);
+                            }else{
+                                url += '&' + query;
+                            }
+                        }else{
+                            url += '?' + query;
+                        }
+                        window.location.href = url;
+                    }
+                }
+            });
+            //搜索功能
+            $("button[name='search']").click(function(){
+                var url = $(this).attr('url');
+                var query  = $('body').find('.search').serialize();
+                query = query.replace(/(&|^)(\w*?\d*?\-*?_*?)*?=?((?=&)|(?=$))/g,'');
+                query = query.replace(/^&/g,'');
+                if( url.indexOf('?')>0 ) url += '&' + query;
+                else url += '?' + query;
+                window.location.href = url;
+            });
+
+            $("button[name='export']").click(function(){
+                var url = $(this).attr('url');
+                var query  = $('body').find('.search').serialize();
+                query = query.replace(/(&|^)(\w*?\d*?\-*?_*?)*?=?((?=&)|(?=$))/g,'');
+                query = query.replace(/^&/g,'');
+                if( url.indexOf('?')>0 ) url += '&' + query;
+                else url += '?' + query;
+                window.location.href = url;
+            });
+            //回车搜索
+            $("#search").keyup(function(e){
+                if(e.keyCode === 13){
+                    $("button[name='search']").click();
+                    return false;
+                }
+            });
+
+            //时间选择
+            function selecttime(flag) {
+                switch (flag) {
+                    case 1:
+                        var end_date = $("#end_time").val();
+                        if (end_date != "") {
+                            var now_date = new Date();
+                            var y = now_date.getFullYear();
+                            var m = now_date.getMonth() + 2;
+                            var d = now_date.getDate();
+                            var now_time = new Date(y + '/' + m + '/' + d);
+                            if (new Date(end_date.replace("-", "/").replace("-", "/")) <= now_time) {
+                                WdatePicker({dateFmt: 'yyyy-MM-dd', minDate: '', maxDate: end_date});
+                            } else {
+                                WdatePicker({dateFmt: 'yyyy-MM-dd', minDate: '', maxDate: '%y-%M-%d'});
+                            }
+                        } else {
+                            WdatePicker({dateFmt: 'yyyy-MM-dd', minDate: '', maxDate: '%y-%M-%d'});
+                        }
+                        break;
+                    case 2:
+                        var startTime = $("#start_time").val();
+                        if (startTime != "") {
+                            WdatePicker({dateFmt: 'yyyy-MM-dd', minDate: startTime, maxDate: '%y-{%M}-%d'});
+                        } else {
+                            WdatePicker({dateFmt: 'yyyy-MM-dd', minDate: '', maxDate: '%y-%M-%d'});
+                        }
+                        break;
+                }
+            }
+            function del(url) {
+                var tmp = new Array();
+                $("input[name='checked']").each(function () {
+                    if ($(this).is(':checked'))
+                        tmp.push($(this).val());
+                })
+                if (tmp.length <= 0) {
+                    alert('你还没有选择任何内容！');
+                    return false;
+                }
+                layer.confirm('确认要删除吗？', function (index) {
+                    //此处请求后台程序，下方是成功后的前台处理……
+                    //ajaxPost提交
+                    $.post(url, {'id': tmp}, function (data) {
+                        parent.layer.alert(data.info, {
+                            time: 3000, //不自动关闭
+                            icon: data.status == '1' ? 1 : 0,
+                            btn: ['确定', ],
+                            end: function () {
+                                window.location.reload();//刷新父窗体
+                            },
+                        });
+                    });
+                    $(obj).parents("tr").remove();
+                    layer.msg('已删除!', {icon: 1, time: 1000});
+                });
+            }
+        </script>
+    </block>
+</block>

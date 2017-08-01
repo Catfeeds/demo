@@ -1,0 +1,73 @@
+<extend name='Public/base'/>
+<block name='body'>
+    <div class="pd-20">
+        <form action="" method="post" enctype="multipart/form-data" class="form form-horizontal" id="form-add">
+            <div class="row cl">
+                <label class="form-label col-1"><span class="c-red">*</span>拒绝原因：</label>
+                <div class="formControls col-3">
+                    <input class="input-text radius" type="text" value="{$check['sms'][0]}" disabled>
+                    <!--<textarea name="push_alert" cols="" rows="" class="textarea radius" placeholder="请输入拒绝原因……" datatype = '*1-250' nullmsg="内容不能为空！">{$info.update_content|default=''}</textarea>-->
+                </div>
+                <div class="formControls col-3 selects">
+                    <select class="input-text radius" size='1' name="msg" id="msg">
+                        <option value="">--请选择--</option>
+                        <volist name="check.msg" id="vo">
+                            <option value="{$key}">{$vo}</option>
+                        </volist>
+                        <option value="-1">其它</option>
+                    </select>
+                </div>
+                <div class="formControls col-3">
+                    <input class="input-text radius" type="text" value="{$check['sms'][1]}" disabled>
+                </div>
+                <div class="col-2"> </div>
+            </div>
+            <div class="row cl">
+                <div class="col-9 col-offset-3">
+                    <input type="hidden" name="uid" value="{:I('uid')}">
+                    <input type="hidden" name="type" value="{:I('type')}">
+                    <input type="hidden" name="guide_type" value="{:I('guide_type')}">
+                    <input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+                </div>
+            </div>
+        </form>
+    </div>
+    <block name='script'>
+        <script type="text/javascript">
+            $("#form-add").Validform({
+                tiptype: 2,
+                ajaxPost: true, //ajax提交
+                postonce: true, //提交一次
+                callback: function (data) {
+                    if (data.status == 1) {
+                        parent.layer.alert(data.info, {
+                            time: 0, //不自动关闭
+                            icon: 1,
+                            btn: ['确定',],
+                            yes: function (index) {
+                                parent.layer.close(index);
+                                window.parent.location.reload();//刷新父窗体
+                                parent.layer.close(parent.layer.getFrameIndex(window.name));//关闭当前窗体
+                            },
+                        });
+                    }else if(data.status == 0){
+                        parent.layer.alert(data.info, {
+                            time: 0, //不自动关闭
+                            icon: 2,
+                            btn: ['确定'],
+                            yes: function (index) {
+                                parent.layer.close(index);
+                            },
+                        });
+                    }
+                }
+            });
+            $('#msg').change(function () {
+                if($(this).val() == -1){
+                    $(this).remove();
+                    $('.selects').append('<input class="input-text radius" type="text" name="other" value="">');
+                }
+            })
+        </script>
+    </block>
+</block>

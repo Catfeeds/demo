@@ -1,0 +1,110 @@
+<extend name="Public/base"/>
+
+<block name="body">
+    <load href="__OTHER__/utf8-php/ueditor.config.js" />
+    <load href="__OTHER__/utf8-php/ueditor.all.min.js" />
+    <load href="__OTHER__/utf8-php/lang/zh-cn/zh-cn.js" />
+    <form action=""  method="post" class="form form-horizontal" id="form-add" name="form">
+        <div style="background-color: #F4F4F4;width: 1000px; height: 750px; margin:0 auto;">
+            <div style="width: 700px;height: 450px;margin-left: 50px">
+                <div style="width: 100%;height: 70px;">
+                    <p style="font-weight: bold;font-size: 16px;">修改文章</p>
+                    <input style="height: 32px;width: 600px;border: 1px solid #CCCCCC;border-radius:4px;" id="title" value="{$list['title']}" type="text" placeholder="请输入标题" name="title">
+                    <!--<p style="font-size: 16px;">添加关键字</p>
+                    <input style="height: 32px;width: 600px;border: 1px solid #CCCCCC;border-radius:4px;" id="user_key" type="text" placeholder="请输入标题" name="title">-->
+                    <div style="width: 60%;height: 30px;margin-top: 10px;">
+                        <div style="width: 40%;height: 100%;float: left;">
+                            能否删除： <label><input name="del" type="radio" id="del_true" value="1" />是</label>
+                            <label><input name="del" type="radio" id="del_false" value="0" />否</label>
+                        </div>
+                        <div style="width: 40%;height: 100%;float: right;">
+                            能否关闭： <label><input name="close" type="radio" id="close_true" value="1" />是</label>
+                            <label><input name="close" type="radio" id="close_false" value="0" />否</label>
+                        </div>
+                        <input type="hidden" value="{$list.id}" id="id">
+                    </div>
+                </div>
+                <div style="width: 200px;height: 70px;margin-top: 40px;">
+                    <p style="font-weight: bold;font-size: 16px;">用户标识</p>
+                    <input style="height: 32px;width: 600px;border: 1px solid #CCCCCC;border-radius:4px;" id="use_key"  value="{$list['use_key']}" type="text" placeholder="请输入用户标识" name="use_key">
+                </div>
+                <div style="border: 1px solid #DFDFDF;width: 870px;height: 530px;margin-top: 20px;background-color: #FAFAFA;">
+                    <script id="editor" name="editor"  type="text/plain" style="width:800px;height:300px;margin-top:40px;margin-left:20px;" value="{$list.content}"></script>
+                    <!--<button name="export" id="add" style="float: right;width: 100px;margin-top: 23px" url="{:U('text_compilation')}" class="btn btn-success">添加</button>-->
+                    <input type="button" id="submit"  style="float: right;width: 100px;margin-top: 23px" url = "{:U('update',array('id'=>$list['id']))}" class="btn btn-success" value="修改"/>
+                </div>
+                <input type="hidden" value="{$list['is_del']}" id="is_del">
+                <input type="hidden" value="{$list['is_close']}" id="is_close">
+                <input type="hidden" value="{$list.content}" id="content">
+            </div>
+        </div>
+    </form>
+
+    <block name="script">
+        <script type="text/javascript" src="__OTHER__/lib/laypage/1.2/laypage.js"></script>
+        <script type="text/javascript" src="__OTHER__/lib/My97DatePicker/WdatePicker.js"></script>
+        <script type="text/javascript">
+            //UEDITOR_HOME_URL、config、all这三个顺序不能改变(绝对路径)
+            //window.UEDITOR_HOME_URL = "/ThinkPHP/Public/Ueditor/";
+
+            //实例化编辑器
+            var ue = UE.getEditor('editor');
+            $(document).ready(function(){
+                    var is_del     = $('#is_del').val();
+                    var is_close   = $('#is_close').val();
+                    var content    = $('#content').val();
+                    if(is_del == '1'){
+                        $('#del_true').attr('checked','checked');
+                    }else{
+                        $('#del_false').attr('checked','checked');
+                    }
+                    if(is_close == '1'){
+                        $('#close_true').attr('checked','checked');
+                    }else{
+                        $('#close_false').attr('checked','checked');
+                    }
+                $('#editor').html(content);
+
+                $(function () {
+                    $('#submit').click(function(){
+                        var del = document.form.del.value;
+                        var close = document.form.close.value;
+                        var title = $('#title').val();
+                        var id = $('#id').val();
+                        var use_key = $('#use_key').val();
+                        var editor = document.form.editor.value;
+                        var url = $('#submit').attr('url');
+                        $.post(url,{title:title,del:del,close:close,use_key:use_key,editor:editor,id:id},function(data){
+                            if (data.status == 1) {
+                                console.log(data.info);
+                                parent.layer.alert(data.info, {
+                                    time: 0, //不自动关闭
+                                    icon: 1,
+                                    btn: ['确定', '继续添加'],
+                                    yes: function (index) {
+                                        parent.layer.close(index);
+                                        window.parent.location.reload();//刷新父窗体
+                                        parent.layer.close(parent.layer.getFrameIndex(window.name));//关闭当前窗体
+                                    },
+                                    cancel: function (index) {
+                                        parent.layer.close(index);
+                                        window.location.reload();
+                                    },
+                                });
+                            }else if(data.status == 0){
+                                parent.layer.alert(data.info, {
+                                    time: 0, //不自动关闭
+                                    icon: 2,
+                                    btn: ['确定'],
+                                    yes: function (index) {
+                                        parent.layer.close(index);
+                                    },
+                                });
+                            }
+                        });
+                    });
+                });
+            });
+        </script>
+    </block>
+</block>

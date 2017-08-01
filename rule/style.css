@@ -1,0 +1,63 @@
+html,body,ul,li,ol,dl,dd,dt,p,h1,h2,h3,h4,h5{
+    margin:0;
+    padding:0
+}
+body{
+    font-family: Microsoft YaHei,Helvetica Neue,Helvetica,Roboto,STHeiTi,Arial,sans-serif;
+    font-size:13px;
+    color: #555555;
+    line-height: 1.7em;
+}
+.articleContent{
+    padding: 1.5em 1em;
+}
+.title_H1{
+    font-size:15px;
+    font-weight: bold;
+    text-align: center;
+    color: #333333;
+}
+.title_H2{
+    font-size:13px;
+    font-weight: bold;
+    color: #555555;
+    padding:0.5em 0;
+}
+.icon{
+    text-align: center;
+    margin: 30px 0px;
+}
+.copyright-text{
+    text-align: center;
+    font-size: 12px;
+    margin:auto;
+    color: #999;
+    position:fixed;
+    bottom: 1em;
+    left: 0;
+    right:0;
+}
+.text-right{
+    text-align: right;
+}
+
+.cash-box{
+	border:1px solid #eaeaea;
+	border-top:none;
+	margin-bottom:10px;
+}
+.cash-title{
+	background:#1aa692;
+	color:#ffffff;
+	padding:10px;
+	font-weight:bold;
+}
+.cash-box dd{
+	border-top:1px solid #eaeaea;
+	padding:10px;
+	text-align:right;
+}
+.cash-box dd span{
+	float:left;
+	color:#888888;
+}

@@ -1,0 +1,46 @@
+<extend name="Public/base"/>
+
+<block name="body">
+
+    <div class="mt-20">
+		<table class="table table-border table-bordered table-hover table-bg table-sort">
+			<thead>
+				<tr class="text-c">
+					<th width="25"><input type="checkbox" name="" value=""></th>
+					<th width="80">用户手机号</th>
+					<th width="100">订单号</th>
+					<th width="40">目的地</th>
+					<th width="40">下单时间</th>
+					<th width="40">订单状态</th>
+					<th width="40">支付金额</th>
+				</tr>
+			</thead>
+			<tbody>
+				<volist name="list" id="guide">
+					<tr class="text-c">
+						<td></td>
+	                    <td>{$guide.mobile}</td>
+	                    <td>{$guide.order_number}</td>
+	                    <td>{$guide.end_addr}</td>
+	                    <td>{$guide.order_time}</td>
+		    			<td>
+							<if condition="$guide.order_status eq '0'"><input type="button" class="btn btn-primary radius" value="待处理订单"/>
+								<elseif condition="$guide.order_status eq '1'"/><input type="button" class="btn btn-success radius" value="已接单，未开始"/>
+								<elseif condition="$guide.order_status eq '2'"/><input type="button" class="btn btn-default round" value="服务已开始"/>
+								<elseif condition="$guide.order_status eq '3'"/><input type="button" class="btn btn-primary radius" value="服务结束，待提交工单"/>
+								<elseif condition="$guide.order_status eq '4'"/><input type="button" class="btn radius btn-secondary" value="工单提交，待支付"/>
+								<elseif condition="$guide.order_status eq '5'"/><input type="button" class="btn btn-success radius" value="已支付，未评论"/>
+								<elseif condition="$guide.order_status eq '6'"/><input type="button" class="btn radius btn-warning" value="订单已结束"/>
+								<elseif condition="$guide.order_status eq '7'"/><input type="button" class="btn btn-danger radius" value="已取消，未支付"/>
+								<elseif condition="$guide.order_status eq '8'"/><input type="button" class="btn btn-danger radius" value="已关闭"/>
+								<elseif condition="$guide.order_status eq '9'"/><input type="button" class="btn btn-danger radius" value="导游已到达用户附近"/>
+								<else />导游
+							</if>
+						</td>
+		    			<td>{$guide.pay_money}</td>
+                    </tr>
+	            </volist>
+	        </tbody>
+	    </table>
+	</div>
+</block>
